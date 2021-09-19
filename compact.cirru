@@ -10,15 +10,12 @@
           calcit.wasmtime :refer $ run-wat format-to-wat
       :defs $ {}
         |main! $ quote
-          defn main! () (println "\"demo")
-            println $ format-to-wat
-              quote $ 
-                a b
-                c d
-                e f (g h)
-                  ;; i j $ k
-                  l m n
-            println $ run-wat "\"(module\n  (func (export \"main\") (param i64) (result i64)\n    get_local 0\n    i64.const 14\n    i64.add\n    return)\n)" 13
+          defn main! () $ let
+              code $ format-to-wat
+                quote $ 
+                  module $ func (export "\"main") (param i64) (result i64) (get_local 0) (i64.const 14) (i64.add) (return)
+            println code
+            println $ run-wat code 13
         |reload! $ quote
           defn reload! () $ println "\"TODO Reload"
     |calcit.wasmtime $ {}
