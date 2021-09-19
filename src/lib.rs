@@ -1,5 +1,6 @@
 use lazy_static::lazy_static;
 use regex::Regex;
+use wasmtime::*;
 
 use cirru_parser::Cirru;
 
@@ -95,4 +96,24 @@ pub fn is_comment_mark(node: &Cirru) -> bool {
     Cirru::List(_) => false,
     Cirru::Leaf(s) => s == ";" || s == ";;",
   }
+}
+
+pub fn run_wat(wat: &str) -> Result<String, String> {
+  let engine = Engine::default();
+
+  let module = Module::new(&engine, wat).map_err(|e| format!("{}", e))?;
+
+  let mut store = Store::new(&engine, 4);
+
+  let instance = Instance::new(&mut store, &module, &[]).map_err(|e| format!("{}", e))?;
+  let entry_fn = instance
+    .get_typed_func::<i64, i64, _>(&mut store, "main")
+    .map_err(|e| format!("{}", e))?;
+
+  // And finally we can call the wasm!
+  let ret = entry_fn
+    .call(&mut store, 100)
+    .map_err(|e| format!("{}", e))?;
+
+  Ok(format!("{}", ret))
 }

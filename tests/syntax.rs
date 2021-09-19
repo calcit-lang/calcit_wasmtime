@@ -121,7 +121,6 @@ func $sum_struct_create
   i32.store offset=4
     get_local $sum_struct_ptr
     get_local $var$b
-
 "#;
 
 const BIGGER_CODE: &str = r#"
