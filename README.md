@@ -1,4 +1,4 @@
-## Caclit Wasmtime Binding
+## Calcit Wasmtime Binding
 
 > Call Wasmtime from Calcit.
 
