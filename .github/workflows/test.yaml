@@ -17,3 +17,4 @@ jobs:
           toolchain: stable
 
       - run: cargo test
+      - run: cargo run --example try_api

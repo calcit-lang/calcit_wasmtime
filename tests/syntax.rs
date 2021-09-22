@@ -1,10 +1,12 @@
-use calcit_wasmtime::format_to_wast;
+extern crate calcit_wasmtime;
+
+use calcit_wasmtime::format_to_wat;
 use cirru_parser::{parse, Cirru};
 
 #[test]
 fn format_tests() -> Result<(), String> {
   assert_eq!(
-    format_to_wast(&[Cirru::List(vec![
+    format_to_wat(vec![Cirru::List(vec![
       Cirru::Leaf(String::from("a")),
       Cirru::Leaf(String::from("b")),
     ])])?,
@@ -12,7 +14,7 @@ fn format_tests() -> Result<(), String> {
   );
 
   assert_eq!(
-    format_to_wast(&[Cirru::List(vec![
+    format_to_wat(vec![Cirru::List(vec![
       Cirru::Leaf(String::from("a")),
       Cirru::Leaf(String::from("b")),
       Cirru::List(vec![
@@ -24,7 +26,7 @@ fn format_tests() -> Result<(), String> {
   );
 
   assert_eq!(
-    format_to_wast(&[Cirru::List(vec![
+    format_to_wat(vec![Cirru::List(vec![
       Cirru::Leaf(String::from("a")),
       Cirru::Leaf(String::from("b")),
       Cirru::List(vec![
@@ -40,7 +42,7 @@ fn format_tests() -> Result<(), String> {
   );
 
   assert_eq!(
-    format_to_wast(&[Cirru::List(vec![
+    format_to_wat(vec![Cirru::List(vec![
       Cirru::Leaf(String::from("a")),
       Cirru::Leaf(String::from("|b")),
     ])])?,
@@ -48,7 +50,7 @@ fn format_tests() -> Result<(), String> {
   );
 
   assert_eq!(
-    format_to_wast(&[Cirru::List(vec![
+    format_to_wat(vec![Cirru::List(vec![
       Cirru::Leaf(String::from("a")),
       Cirru::Leaf(String::from("|b c")),
     ])])?,
@@ -72,7 +74,7 @@ const COMMENT_2: &str = r#"
 #[test]
 fn comment_tests() -> Result<(), String> {
   assert_eq!(
-    format_to_wast(&[Cirru::List(vec![
+    format_to_wat(vec![Cirru::List(vec![
       Cirru::Leaf(String::from("a")),
       Cirru::Leaf(String::from("b")),
       Cirru::List(vec![
@@ -84,7 +86,7 @@ fn comment_tests() -> Result<(), String> {
   );
 
   assert_eq!(
-    format_to_wast(&[Cirru::List(vec![
+    format_to_wat(vec![Cirru::List(vec![
       Cirru::Leaf(String::from("a")),
       Cirru::Leaf(String::from("b")),
       Cirru::List(vec![
@@ -121,7 +123,6 @@ func $sum_struct_create
   i32.store offset=4
     get_local $sum_struct_ptr
     get_local $var$b
-
 "#;
 
 const BIGGER_CODE: &str = r#"
@@ -135,7 +136,7 @@ const BIGGER_CODE: &str = r#"
 #[test]
 fn format_wast_tests() -> Result<(), String> {
   assert_eq!(
-    format_to_wast(&[Cirru::List(vec![
+    format_to_wat(vec![Cirru::List(vec![
       Cirru::Leaf(String::from("func")),
       Cirru::Leaf(String::from("$get_16")),
       Cirru::List(vec![
@@ -151,7 +152,7 @@ fn format_wast_tests() -> Result<(), String> {
   );
 
   assert_eq!(
-    format_to_wast(&parse(BIGGER_CODE_CIRRU)?)?,
+    format_to_wat(parse(BIGGER_CODE_CIRRU)?)?,
     String::from(BIGGER_CODE)
   );
 

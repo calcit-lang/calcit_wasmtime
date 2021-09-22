@@ -1,98 +1,39 @@
-use lazy_static::lazy_static;
-use regex::Regex;
+mod s_expr;
+
+use s_expr::format_expr;
+
+use wasmtime::{Engine, Instance, Module, Store};
 
 use cirru_parser::Cirru;
 
-pub fn format_to_wast(xs: &[Cirru]) -> Result<String, String> {
+#[no_mangle]
+pub fn format_to_wat(xs: Vec<Cirru>) -> Result<String, String> {
   let mut content: String = String::from("\n");
 
   for expr in xs {
-    content = format!("{}{}\n", content, format_expr(expr, 0)?);
+    content = format!("{}{}\n", content, format_expr(&expr, 0)?);
   }
 
   Ok(content)
 }
 
-lazy_static! {
-  static ref ENDS_WITH_NEWLINE: Regex = Regex::new("\\n\\s+$").unwrap();
-}
+/// currently on i64 is demoed
+#[no_mangle]
+pub fn run_wat(wat: String, n: i64) -> Result<i64, String> {
+  let engine = Engine::default();
 
-pub fn format_expr(node: &Cirru, indent: usize) -> Result<String, String> {
-  match node {
-    Cirru::List(xs) => {
-      if !xs.is_empty() && is_comment_mark(&xs[0]) {
-        let mut chunk: String = format!("{}{}", gen_newline(indent), ";;");
-        for (idx, x) in xs.iter().enumerate() {
-          if idx > 0 {
-            chunk = format!("{} {}", chunk, x);
-          }
-        }
-        chunk = format!("{}{}", chunk.trim_end(), gen_newline(indent));
-        Ok(chunk)
-      } else {
-        let mut chunk = String::from("(");
-        for (idx, x) in xs.iter().enumerate() {
-          if is_nested(x) {
-            chunk = format!("{}{}", chunk.trim_end(), gen_newline(indent + 1));
-          }
-          let next = format_expr(x, indent + 1)?;
-          if next.starts_with('\n') {
-            chunk = format!("{}{}", chunk.trim_end(), next);
-          } else {
-            chunk = format!("{}{}", chunk, next);
-          }
-          // TODO dirty way, but intuitive for now
-          if idx < xs.len() - 1 && !ENDS_WITH_NEWLINE.is_match(&chunk) {
-            chunk = format!("{} ", chunk);
-          }
-        }
-        Ok(format!("{})", chunk))
-      }
-    }
-    Cirru::Leaf(token) => {
-      if token.is_empty() {
-        Err(String::from("empty string is invalid"))
-      } else {
-        let s0 = token.chars().next().unwrap();
-        if s0 == '|' || s0 == '"' {
-          Ok(format!("\"{}\"", token[1..].escape_default().to_string()))
-        } else if token.contains(' ') || token.contains('\n') || token.contains('\"') {
-          Err(format!("bad token content: {}", token))
-        } else {
-          Ok(token.to_owned())
-        }
-      }
-    }
-  }
-}
+  let module = Module::new(&engine, &wat).map_err(|e| format!("{}", e))?;
 
-pub fn gen_newline(n: usize) -> String {
-  let mut chunk: String = String::from("\n");
-  for _ in 0..n {
-    chunk = format!("{}  ", chunk);
-  }
-  chunk
-}
+  let mut store = Store::new(&engine, 0);
 
-pub fn is_nested(node: &Cirru) -> bool {
-  match node {
-    Cirru::Leaf(_) => false,
-    Cirru::List(xs) => {
-      for x in xs {
-        if let Cirru::List(ys) = x {
-          if !ys.is_empty() {
-            return true;
-          }
-        }
-      }
-      false
-    }
-  }
-}
+  let instance = Instance::new(&mut store, &module, &[]).map_err(|e| format!("{}", e))?;
+  let entry_fn = instance
+    .get_typed_func::<i64, i64, _>(&mut store, "main")
+    .map_err(|e| format!("{}", e))?;
 
-pub fn is_comment_mark(node: &Cirru) -> bool {
-  match node {
-    Cirru::List(_) => false,
-    Cirru::Leaf(s) => s == ";" || s == ";;",
-  }
+  let ret = entry_fn
+    .call(&mut store, n) // with an parameter of i64
+    .map_err(|e| format!("{}", e))?;
+
+  Ok(ret)
 }
