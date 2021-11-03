@@ -1,60 +1,55 @@
 extern crate calcit_wasmtime;
 
 use calcit_wasmtime::format_to_wat;
+use cirru_edn::Edn;
 use cirru_parser::{parse, Cirru};
 
 #[test]
 fn format_tests() -> Result<(), String> {
   assert_eq!(
-    format_to_wat(vec![Cirru::List(vec![
-      Cirru::Leaf(String::from("a")),
-      Cirru::Leaf(String::from("b")),
-    ])])?,
-    String::from("\n(a b)\n")
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+      Cirru::leaf("a"),
+      Cirru::leaf("b"),
+    ])]))])?,
+    Edn::Str(String::from("\n(a b)\n").into_boxed_str())
   );
 
   assert_eq!(
-    format_to_wat(vec![Cirru::List(vec![
-      Cirru::Leaf(String::from("a")),
-      Cirru::Leaf(String::from("b")),
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+      Cirru::leaf("a"),
+      Cirru::leaf("b"),
+      Cirru::List(vec![Cirru::leaf("c"), Cirru::leaf("d"),])
+    ])]))])?,
+    Edn::Str(String::from("\n(a b (c d))\n").into_boxed_str())
+  );
+
+  assert_eq!(
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+      Cirru::leaf("a"),
+      Cirru::leaf("b"),
       Cirru::List(vec![
-        Cirru::Leaf(String::from("c")),
-        Cirru::Leaf(String::from("d")),
+        Cirru::leaf("c"),
+        Cirru::leaf("d"),
+        Cirru::List(vec![Cirru::leaf("e"), Cirru::leaf("f"),])
       ])
-    ])])?,
-    String::from("\n(a b (c d))\n")
+    ])]))])?,
+    Edn::Str(String::from("\n(a b\n  (c d (e f)))\n").into_boxed_str())
   );
 
   assert_eq!(
-    format_to_wat(vec![Cirru::List(vec![
-      Cirru::Leaf(String::from("a")),
-      Cirru::Leaf(String::from("b")),
-      Cirru::List(vec![
-        Cirru::Leaf(String::from("c")),
-        Cirru::Leaf(String::from("d")),
-        Cirru::List(vec![
-          Cirru::Leaf(String::from("e")),
-          Cirru::Leaf(String::from("f")),
-        ])
-      ])
-    ])])?,
-    String::from("\n(a b\n  (c d (e f)))\n")
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+      Cirru::leaf("a"),
+      Cirru::leaf("|b"),
+    ])]))])?,
+    Edn::Str(String::from("\n(a \"b\")\n").into_boxed_str())
   );
 
   assert_eq!(
-    format_to_wat(vec![Cirru::List(vec![
-      Cirru::Leaf(String::from("a")),
-      Cirru::Leaf(String::from("|b")),
-    ])])?,
-    String::from("\n(a \"b\")\n")
-  );
-
-  assert_eq!(
-    format_to_wat(vec![Cirru::List(vec![
-      Cirru::Leaf(String::from("a")),
-      Cirru::Leaf(String::from("|b c")),
-    ])])?,
-    String::from("\n(a \"b c\")\n")
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+      Cirru::leaf("a"),
+      Cirru::leaf("|b c"),
+    ])]))])?,
+    Edn::Str(String::from("\n(a \"b c\")\n").into_boxed_str())
   );
 
   Ok(())
@@ -74,31 +69,22 @@ const COMMENT_2: &str = r#"
 #[test]
 fn comment_tests() -> Result<(), String> {
   assert_eq!(
-    format_to_wat(vec![Cirru::List(vec![
-      Cirru::Leaf(String::from("a")),
-      Cirru::Leaf(String::from("b")),
-      Cirru::List(vec![
-        Cirru::Leaf(String::from(";")),
-        Cirru::Leaf(String::from("d")),
-      ])
-    ])])?,
-    String::from(COMMENT_1)
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+      Cirru::leaf("a"),
+      Cirru::leaf("b"),
+      Cirru::List(vec![Cirru::leaf(";"), Cirru::leaf("d"),])
+    ])]))])?,
+    Edn::Str(String::from(COMMENT_1).into_boxed_str())
   );
 
   assert_eq!(
-    format_to_wat(vec![Cirru::List(vec![
-      Cirru::Leaf(String::from("a")),
-      Cirru::Leaf(String::from("b")),
-      Cirru::List(vec![
-        Cirru::Leaf(String::from(";")),
-        Cirru::Leaf(String::from("d")),
-      ]),
-      Cirru::List(vec![
-        Cirru::Leaf(String::from("e")),
-        Cirru::Leaf(String::from("f")),
-      ])
-    ])])?,
-    String::from(COMMENT_2)
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+      Cirru::leaf("a"),
+      Cirru::leaf("b"),
+      Cirru::List(vec![Cirru::leaf(";"), Cirru::leaf("d"),]),
+      Cirru::List(vec![Cirru::leaf("e"), Cirru::leaf("f"),])
+    ])]))])?,
+    Edn::Str(String::from(COMMENT_2).into_boxed_str())
   );
 
   Ok(())
@@ -136,24 +122,18 @@ const BIGGER_CODE: &str = r#"
 #[test]
 fn format_wast_tests() -> Result<(), String> {
   assert_eq!(
-    format_to_wat(vec![Cirru::List(vec![
-      Cirru::Leaf(String::from("func")),
-      Cirru::Leaf(String::from("$get_16")),
-      Cirru::List(vec![
-        Cirru::Leaf(String::from("result")),
-        Cirru::Leaf(String::from("i32")),
-      ]),
-      Cirru::List(vec![
-        Cirru::Leaf(String::from("i32.const")),
-        Cirru::Leaf(String::from("16")),
-      ]),
-    ])])?,
-    String::from(SIMPLE_CODE)
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+      Cirru::leaf("func"),
+      Cirru::leaf("$get_16"),
+      Cirru::List(vec![Cirru::leaf("result"), Cirru::leaf("i32"),]),
+      Cirru::List(vec![Cirru::leaf("i32.const"), Cirru::leaf("16"),]),
+    ])]))])?,
+    Edn::str(SIMPLE_CODE)
   );
 
   assert_eq!(
-    format_to_wat(parse(BIGGER_CODE_CIRRU)?)?,
-    String::from(BIGGER_CODE)
+    format_to_wat(vec![Edn::Quote(Cirru::List(parse(BIGGER_CODE_CIRRU)?))])?,
+    Edn::str(String::from(BIGGER_CODE))
   );
 
   Ok(())

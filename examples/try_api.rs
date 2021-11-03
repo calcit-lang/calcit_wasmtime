@@ -1,4 +1,5 @@
 use calcit_wasmtime::{format_to_wat, run_wat};
+use cirru_edn::Edn;
 use cirru_parser::Cirru;
 
 const DEMO: &str = r#"
@@ -13,13 +14,16 @@ const DEMO: &str = r#"
 
 fn main() -> Result<(), String> {
   let tree = vec![Cirru::List(vec![
-    Cirru::Leaf(String::from("call")),
-    Cirru::Leaf(String::from("f")),
+    Cirru::Leaf(String::from("call").into_boxed_str()),
+    Cirru::Leaf(String::from("f").into_boxed_str()),
   ])];
-  let code = format_to_wat(tree)?;
+  let code = format_to_wat(vec![Edn::Quote(Cirru::List(tree))])?;
   println!("{}", code);
 
-  println!("{}", run_wat(DEMO.to_owned(), 44)?);
+  println!(
+    "{}",
+    run_wat(vec![Edn::List(vec![Edn::str(DEMO), Edn::Number(44.0)])])?
+  );
 
   Ok(())
 }
