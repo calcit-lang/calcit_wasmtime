@@ -7,24 +7,24 @@ use cirru_parser::{parse, Cirru};
 #[test]
 fn format_tests() -> Result<(), String> {
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![
       Cirru::leaf("a"),
       Cirru::leaf("b"),
-    ])]))])?,
+    ]))])?,
     Edn::Str(String::from("\n(a b)\n").into_boxed_str())
   );
 
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![
       Cirru::leaf("a"),
       Cirru::leaf("b"),
       Cirru::List(vec![Cirru::leaf("c"), Cirru::leaf("d"),])
-    ])]))])?,
+    ]))])?,
     Edn::Str(String::from("\n(a b (c d))\n").into_boxed_str())
   );
 
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![
       Cirru::leaf("a"),
       Cirru::leaf("b"),
       Cirru::List(vec![
@@ -32,23 +32,23 @@ fn format_tests() -> Result<(), String> {
         Cirru::leaf("d"),
         Cirru::List(vec![Cirru::leaf("e"), Cirru::leaf("f"),])
       ])
-    ])]))])?,
+    ]))])?,
     Edn::Str(String::from("\n(a b\n  (c d (e f)))\n").into_boxed_str())
   );
 
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![
       Cirru::leaf("a"),
       Cirru::leaf("|b"),
-    ])]))])?,
+    ]))])?,
     Edn::Str(String::from("\n(a \"b\")\n").into_boxed_str())
   );
 
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![
       Cirru::leaf("a"),
       Cirru::leaf("|b c"),
-    ])]))])?,
+    ]))])?,
     Edn::Str(String::from("\n(a \"b c\")\n").into_boxed_str())
   );
 
@@ -69,21 +69,21 @@ const COMMENT_2: &str = r#"
 #[test]
 fn comment_tests() -> Result<(), String> {
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![
       Cirru::leaf("a"),
       Cirru::leaf("b"),
       Cirru::List(vec![Cirru::leaf(";"), Cirru::leaf("d"),])
-    ])]))])?,
+    ]))])?,
     Edn::Str(String::from(COMMENT_1).into_boxed_str())
   );
 
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![
       Cirru::leaf("a"),
       Cirru::leaf("b"),
       Cirru::List(vec![Cirru::leaf(";"), Cirru::leaf("d"),]),
       Cirru::List(vec![Cirru::leaf("e"), Cirru::leaf("f"),])
-    ])]))])?,
+    ]))])?,
     Edn::Str(String::from(COMMENT_2).into_boxed_str())
   );
 
@@ -122,17 +122,19 @@ const BIGGER_CODE: &str = r#"
 #[test]
 fn format_wast_tests() -> Result<(), String> {
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::List(vec![
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![
       Cirru::leaf("func"),
       Cirru::leaf("$get_16"),
       Cirru::List(vec![Cirru::leaf("result"), Cirru::leaf("i32"),]),
       Cirru::List(vec![Cirru::leaf("i32.const"), Cirru::leaf("16"),]),
-    ])]))])?,
+    ]))])?,
     Edn::str(SIMPLE_CODE)
   );
 
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(parse(BIGGER_CODE_CIRRU)?))])?,
+    format_to_wat(vec![Edn::Quote(
+      parse(BIGGER_CODE_CIRRU)?.get(0).unwrap().to_owned()
+    )])?,
     Edn::str(String::from(BIGGER_CODE))
   );
 

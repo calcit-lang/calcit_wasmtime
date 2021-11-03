@@ -1,38 +1,25 @@
-mod s_expr;
-
-use s_expr::format_expr;
-
 use wasmtime::{Engine, Instance, Module, Store};
 
 use cirru_edn::Edn;
-use cirru_parser::Cirru;
+use cirru_parser::{format_to_lisp, Cirru};
 
 #[no_mangle]
 pub fn abi_version() -> String {
   String::from("0.0.5")
 }
 
+/// only implement very simple rules turning symbols in to lisp, NOT SOLID
 #[no_mangle]
 pub fn format_to_wat(args: Vec<Edn>) -> Result<Edn, String> {
-  if args.len() != 1 {
-    return Err(format!("expected 1 argument, {:?}", args));
-  }
-
   println!("code: {:?}", args);
 
-  match &args[0] {
-    Edn::Quote(xs) => match xs {
-      Cirru::Leaf { .. } => Err(format!("Unknown code: {}", xs)),
-      Cirru::List(xs) => {
-        let mut content: String = String::from("\n");
-        for expr in xs {
-          content = format!("{}{}\n", content, format_expr(expr, 0)?);
-        }
-        Ok(Edn::str(content))
-      }
-    },
-    a => Err(format!("expected tree, got leaf: {}", a)),
+  let mut lines: Vec<Cirru> = vec![];
+
+  for x in args {
+    lines.push(edn_to_cirru(&x)?);
   }
+
+  Ok(Edn::str(format_to_lisp(lines)?))
 }
 
 /// currently on i64 is demoed
@@ -69,5 +56,28 @@ pub fn run_wat(args: Vec<Edn>) -> Result<Edn, String> {
       "expected wat and initial number, got: {} {}",
       args[0], args[1]
     )),
+  }
+}
+
+// quoted code in edn, into Cirru nodes
+fn edn_to_cirru(expr: &Edn) -> Result<Cirru, String> {
+  match expr {
+    Edn::List(xs) => {
+      let mut ys: Vec<Cirru> = vec![];
+      for x in xs {
+        ys.push(edn_to_cirru(x)?);
+      }
+      Ok(Cirru::List(ys))
+    }
+    // just use bare symbol...
+    Edn::Symbol(s) => Ok(Cirru::leaf(format!("{}", *s))),
+    Edn::Str(s) => Ok(Cirru::leaf(format!("|{}", *s))),
+    Edn::Keyword(k) => Ok(Cirru::leaf(format!("|{}", k.to_str()))),
+    Edn::Bool(b) => Ok(Cirru::leaf(format!("{}", b))),
+
+    Edn::Number(n) => Ok(Cirru::leaf(format!("{}", n))),
+    Edn::Nil => Ok(Cirru::leaf("nil")),
+    Edn::Quote(q) => Ok(q.to_owned()),
+    _ => Err(format!("unexpected edn data for Cirru: {}", expr)),
   }
 }

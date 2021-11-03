@@ -23,9 +23,9 @@
         |main! $ quote
           defn main! () $ let
               code $ format-to-wat
-                ; quote $ 
-                  module $ func (export "\"main") (param i64) (result i64) (get_local 0) (i64.const 14) (i64.add) (return)
-                :: 'quote $ quote
+                quote $ module
+                  func (export "\"main") (param i64) (result i64) (get_local 0) (i64.const 14) (i64.add) (return)
+                ; :: 'quote $ quote
                     "\"module" $ "\"func" ("\"export" "\"\"main") ("\"param" "\"i64") ("\"result" "\"i64") ("\"get_local" "\"0") ("\"i64.const" "\"14") ("\"i64.add") ("\"return")
             println code
             println $ run-wat code 13

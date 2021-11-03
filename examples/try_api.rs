@@ -13,10 +13,7 @@ const DEMO: &str = r#"
 "#;
 
 fn main() -> Result<(), String> {
-  let tree = vec![Cirru::List(vec![
-    Cirru::Leaf(String::from("call").into_boxed_str()),
-    Cirru::Leaf(String::from("f").into_boxed_str()),
-  ])];
+  let tree = vec![Cirru::leaf("call"), Cirru::leaf("f")];
   let code = format_to_wat(vec![Edn::Quote(Cirru::List(tree))])?;
   println!("{}", code);
 
