@@ -20,10 +20,7 @@ fn main() -> Result<(), String> {
   let code = format_to_wat(vec![Edn::Quote(Cirru::List(tree))])?;
   println!("{}", code);
 
-  println!(
-    "{}",
-    run_wat(vec![Edn::List(vec![Edn::str(DEMO), Edn::Number(44.0)])])?
-  );
+  println!("{}", run_wat(vec![Edn::str(DEMO), Edn::Number(44.0)])?);
 
   Ok(())
 }

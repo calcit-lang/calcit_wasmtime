@@ -39,7 +39,11 @@ pub fn format_to_wat(args: Vec<Edn>) -> Result<Edn, String> {
 #[no_mangle]
 pub fn run_wat(args: Vec<Edn>) -> Result<Edn, String> {
   if args.len() != 2 {
-    return Err(format!("expected 2 arguments, got {:?}", args));
+    return Err(format!(
+      "expected 2 arguments, got {}... {:?}",
+      args.len(),
+      args
+    ));
   }
 
   match (&args[0], &args[1]) {
