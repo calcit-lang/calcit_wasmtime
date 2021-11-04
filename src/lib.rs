@@ -19,7 +19,7 @@ pub fn format_to_wat(args: Vec<Edn>) -> Result<Edn, String> {
     lines.push(edn_to_cirru(&x)?);
   }
 
-  Ok(Edn::str(format_to_lisp(lines)?))
+  Ok(Edn::str(format_to_lisp(&lines)?))
 }
 
 /// currently on i64 is demoed

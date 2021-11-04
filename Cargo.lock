@@ -133,9 +133,9 @@ dependencies = [
 
 [[package]]
 name = "cirru_parser"
-version = "0.1.12"
+version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7344fe701ed60135a9caad1269b200a7dc559abd9860ac5a8b29c674ce579a05"
+checksum = "3fcb998785f4c41989f7a1057f2580a7b4d515db4abb50687f96a7abdd5472c3"
 
 [[package]]
 name = "cpp_demangle"
