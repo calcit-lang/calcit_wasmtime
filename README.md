@@ -4,9 +4,10 @@
 
 ### Usage
 
-under `calcit.wasmtime`:
+under `wasmtime.core`:
 
 ```cirru
+; "generate lisp style code from quoted code"
 format-to-wat
   quote $
     a b
@@ -15,16 +16,17 @@ format-to-wat
       ;; i j $ k
       l m n
 
-; "currently only supports i64->i64"
+; "currently only demonstrated i64->i64"
 run-wat "\"(module\n  (func (export \"main\") (param i64) (result i64)\n    get_local 0\n    i64.const 14\n    i64.add\n    return)\n)" 13
 ```
 
 ### Develop
 
-Try example:
+If you have have [calcit_runner](https://github.com/calcit-lang/calcit_runner.rs) installed:
 
 ```bash
-cargo run --example try_api
+./build.sh
+cr -1
 ```
 
 ### License
