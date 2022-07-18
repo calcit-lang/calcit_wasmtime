@@ -7,10 +7,7 @@ use cirru_parser::{parse, Cirru};
 #[test]
 fn format_tests() -> Result<(), String> {
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(vec![
-      Cirru::leaf("a"),
-      Cirru::leaf("b"),
-    ]))])?,
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::leaf("a"), Cirru::leaf("b"),]))])?,
     Edn::Str(String::from("\n(a b)\n").into_boxed_str())
   );
 
@@ -37,18 +34,12 @@ fn format_tests() -> Result<(), String> {
   );
 
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(vec![
-      Cirru::leaf("a"),
-      Cirru::leaf("|b"),
-    ]))])?,
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::leaf("a"), Cirru::leaf("|b"),]))])?,
     Edn::Str(String::from("\n(a \"b\")\n").into_boxed_str())
   );
 
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(Cirru::List(vec![
-      Cirru::leaf("a"),
-      Cirru::leaf("|b c"),
-    ]))])?,
+    format_to_wat(vec![Edn::Quote(Cirru::List(vec![Cirru::leaf("a"), Cirru::leaf("|b c"),]))])?,
     Edn::Str(String::from("\n(a \"b c\")\n").into_boxed_str())
   );
 
@@ -132,9 +123,7 @@ fn format_wast_tests() -> Result<(), String> {
   );
 
   assert_eq!(
-    format_to_wat(vec![Edn::Quote(
-      parse(BIGGER_CODE_CIRRU)?.get(0).unwrap().to_owned()
-    )])?,
+    format_to_wat(vec![Edn::Quote(parse(BIGGER_CODE_CIRRU)?.get(0).unwrap().to_owned())])?,
     Edn::str(String::from(BIGGER_CODE))
   );
 

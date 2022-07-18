@@ -5,7 +5,7 @@ use cirru_parser::{format_to_lisp, Cirru};
 
 #[no_mangle]
 pub fn abi_version() -> String {
-  String::from("0.0.5")
+  String::from("0.0.6")
 }
 
 /// only implement very simple rules turning symbols in to lisp, NOT SOLID
@@ -26,37 +26,40 @@ pub fn format_to_wat(args: Vec<Edn>) -> Result<Edn, String> {
 #[no_mangle]
 pub fn run_wat(args: Vec<Edn>) -> Result<Edn, String> {
   if args.len() != 2 {
-    return Err(format!(
-      "expected 2 arguments, got {}... {:?}",
-      args.len(),
-      args
-    ));
+    return Err(format!("expected 2 arguments, got {}... {:?}", args.len(), args));
   }
 
-  match (&args[0], &args[1]) {
-    (Edn::Str(wat), Edn::Number(n)) => {
-      let engine = Engine::default();
+  let (wat, n) = match (&args[0], &args[1]) {
+    (Edn::Str(code), Edn::Number(n)) => ((**code).to_owned(), n),
+    (Edn::Quote(code), Edn::Number(n)) => match code {
+      Cirru::Leaf(_) => return Err(format!("expected expression, got: {}", code)),
+      Cirru::List(xs) => {
+        let mut lines: Vec<Cirru> = vec![];
 
-      let module = Module::new(&engine, &**wat).map_err(|e| format!("{}", e))?;
+        for x in xs {
+          lines.push(x.to_owned());
+        }
+        (format_to_lisp(&lines)?, n)
+      }
+    },
+    (_, _) => return Err(format!("expected wat and initial number, got: {} {}", args[0], args[1])),
+  };
 
-      let mut store = Store::new(&engine, 0);
+  let engine = Engine::default();
+  let module = Module::new(&engine, &wat).map_err(|e| format!("{}", e))?;
 
-      let instance = Instance::new(&mut store, &module, &[]).map_err(|e| format!("{}", e))?;
-      let entry_fn = instance
-        .get_typed_func::<i64, i64, _>(&mut store, "main")
-        .map_err(|e| format!("{}", e))?;
+  let mut store = Store::new(&engine, 0);
 
-      let ret = entry_fn
-        .call(&mut store, *n as i64) // with an parameter of i64
-        .map_err(|e| format!("{}", e))?;
+  let instance = Instance::new(&mut store, &module, &[]).map_err(|e| format!("{}", e))?;
+  let entry_fn = instance
+    .get_typed_func::<i64, i64, _>(&mut store, "main")
+    .map_err(|e| format!("{}", e))?;
 
-      Ok(Edn::Number(ret as f64))
-    }
-    (_, _) => Err(format!(
-      "expected wat and initial number, got: {} {}",
-      args[0], args[1]
-    )),
-  }
+  let ret = entry_fn
+    .call(&mut store, *n as i64) // with an parameter of i64
+    .map_err(|e| format!("{}", e))?;
+
+  Ok(Edn::Number(ret as f64))
 }
 
 // quoted code in edn, into Cirru nodes
