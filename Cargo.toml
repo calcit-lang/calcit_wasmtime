@@ -11,8 +11,8 @@ crate-type = ["rlib", "dylib"] # Creates dynamic lib
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cirru_parser = "0.1.23"
-cirru_edn = "0.2.20"
-wasmtime = "0.37.0"
+cirru_parser = "0.1.29"
+cirru_edn = "0.6.3"
+wasmtime = { version = "20.0.1" , features = ['gc'] }
 regex = "1.6"
 lazy_static = "1.4.0"

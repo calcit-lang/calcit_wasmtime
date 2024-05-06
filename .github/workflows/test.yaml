@@ -11,22 +11,16 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: ACTIONS_ALLOW_UNSECURE_COMMANDS
-        id: ACTIONS_ALLOW_UNSECURE_COMMANDS
-        run: echo 'ACTIONS_ALLOW_UNSECURE_COMMANDS=true' >> $GITHUB_ENV
+      - uses: calcit-lang/setup-cr@0.0.3
+        with:
+          version: "0.8.50"
 
-      - name: add cr
-        run: |
-          mkdir -p $GITHUB_WORKSPACE/bin
-          wget -O $GITHUB_WORKSPACE/bin/cr https://github.com/calcit-lang/calcit/releases/download/0.6.1/cr
-          chmod +x $GITHUB_WORKSPACE/bin/cr
-          echo "::add-path::$GITHUB_WORKSPACE/bin"
-
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
+          components: clippy
 
       - run: cargo test
       - run: cargo run --example try_api

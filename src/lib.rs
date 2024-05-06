@@ -46,18 +46,18 @@ pub fn run_wat(args: Vec<Edn>) -> Result<Edn, String> {
   };
 
   let engine = Engine::default();
-  let module = Module::new(&engine, &wat).map_err(|e| format!("{}", e))?;
+  let module = Module::new(&engine, wat).map_err(|e| format!("loading wat: {:?}", e))?;
 
   let mut store = Store::new(&engine, 0);
 
-  let instance = Instance::new(&mut store, &module, &[]).map_err(|e| format!("{}", e))?;
+  let instance = Instance::new(&mut store, &module, &[]).map_err(|e| format!("instance failed: {}", e))?;
   let entry_fn = instance
-    .get_typed_func::<i64, i64, _>(&mut store, "main")
-    .map_err(|e| format!("{}", e))?;
+    .get_typed_func::<i64, i64>(&mut store, "main")
+    .map_err(|e| format!("get entry failed: {}", e))?;
 
   let ret = entry_fn
     .call(&mut store, *n as i64) // with an parameter of i64
-    .map_err(|e| format!("{}", e))?;
+    .map_err(|e| format!("falled call: {}", e))?;
 
   Ok(Edn::Number(ret as f64))
 }
@@ -75,7 +75,7 @@ fn edn_to_cirru(expr: &Edn) -> Result<Cirru, String> {
     // just use bare symbol...
     Edn::Symbol(s) => Ok(Cirru::leaf(format!("{}", *s))),
     Edn::Str(s) => Ok(Cirru::leaf(format!("|{}", *s))),
-    Edn::Keyword(k) => Ok(Cirru::leaf(format!("|{}", k.to_str()))),
+    Edn::Tag(k) => Ok(Cirru::leaf(format!("|{}", k))),
     Edn::Bool(b) => Ok(Cirru::leaf(format!("{}", b))),
 
     Edn::Number(n) => Ok(Cirru::leaf(format!("{}", n))),
