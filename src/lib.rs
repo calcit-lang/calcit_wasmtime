@@ -5,7 +5,7 @@ use cirru_parser::{format_to_lisp, Cirru};
 
 #[no_mangle]
 pub fn abi_version() -> String {
-  String::from("0.0.6")
+  String::from("0.0.7")
 }
 
 /// only implement very simple rules turning symbols in to lisp, NOT SOLID

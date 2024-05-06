@@ -93,21 +93,21 @@ func $sum_struct_create
   ;; "c// sum_struct_ptr->a = a;"
 
   i32.store
-    get_local $sum_struct_ptr
-    get_local $var$a
+    local.get $sum_struct_ptr
+    local.get $var$a
 
   ;; "c// sum_struct_ptr->b = b;"
   i32.store offset=4
-    get_local $sum_struct_ptr
-    get_local $var$b
+    local.get $sum_struct_ptr
+    local.get $var$b
 "#;
 
 const BIGGER_CODE: &str = r#"
 (func $sum_struct_create (param $sum_struct_ptr i32) (param $var$a i32) (param $var$b i32)
   ;; "c// sum_struct_ptr->a = a;"
-  (i32.store (get_local $sum_struct_ptr) (get_local $var$a))
+  (i32.store (local.get $sum_struct_ptr) (local.get $var$a))
   ;; "c// sum_struct_ptr->b = b;"
-  (i32.store offset=4 (get_local $sum_struct_ptr) (get_local $var$b)))
+  (i32.store offset=4 (local.get $sum_struct_ptr) (local.get $var$b)))
 "#;
 
 #[test]
