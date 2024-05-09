@@ -4,8 +4,9 @@ use cirru_parser::Cirru;
 
 const DEMO: &str = r#"
 (module
+  ;; (type (struct (field i8 i8 i8 i8)))
   (func (export "main") (param i64) (result i64)
-    get_local 0
+    local.get 0
     i64.const 3
     i64.add
     return)
