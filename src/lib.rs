@@ -1,4 +1,4 @@
-use wasmtime::{Engine, Instance, Module, Store};
+use wasmtime::{Config, Engine, Instance, Module, Store};
 
 use cirru_edn::Edn;
 use cirru_parser::{format_to_lisp, Cirru};
@@ -45,7 +45,10 @@ pub fn run_wat(args: Vec<Edn>) -> Result<Edn, String> {
     (_, _) => return Err(format!("expected wat and initial number, got: {} {}", args[0], args[1])),
   };
 
-  let engine = Engine::default();
+  print!("wat: {}", wat);
+
+  let config = Config::default().wasm_function_references(true).wasm_gc(true).to_owned();
+  let engine = Engine::new(&config).map_err(|e| format!("engine failed: {}", e))?;
   let module = Module::new(&engine, wat).map_err(|e| format!("loading wat: {:?}", e))?;
 
   let mut store = Store::new(&engine, 0);
