@@ -13,9 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: calcit-lang/setup-cr@0.0.3
+      - uses: calcit-lang/setup-cr@0.0.7
         with:
-          version: "0.8.50"
+          bundler: false
 
       - uses: dtolnay/rust-toolchain@stable
         with:
