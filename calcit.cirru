@@ -31,6 +31,7 @@
               |r $ %{} :Expr (:at 1632070274884) (:by |u0)
                 :data $ {}
                   |T $ %{} :Leaf (:at 1632070274884) (:by |u0) (:text |code)
+                  |b $ %{} :Leaf (:at 1731521044167) (:by |u0) (:text |f-name)
                   |j $ %{} :Leaf (:at 1632070274884) (:by |u0) (:text |v0)
               |v $ %{} :Expr (:at 1632070274884) (:by |u0)
                 :data $ {}
@@ -41,6 +42,7 @@
                       |r $ %{} :Leaf (:at 1632075624544) (:by |u0) (:text "|\"/dylibs/libcalcit_wasmtime")
                   |n $ %{} :Leaf (:at 1632070297201) (:by |u0) (:text "|\"run_wat")
                   |r $ %{} :Leaf (:at 1632070274884) (:by |u0) (:text |code)
+                  |t $ %{} :Leaf (:at 1731520951193) (:by |u0) (:text |f-name)
                   |v $ %{} :Leaf (:at 1632070274884) (:by |u0) (:text |v0)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1632069968920) (:by |u0)
@@ -133,6 +135,10 @@
                                             :data $ {}
                                               |T $ %{} :Leaf (:at 1731434757300) (:by |u0) (:text |export)
                                               |b $ %{} :Leaf (:at 1731434758904) (:by |u0) (:text "|\"demo")
+                                          |e $ %{} :Expr (:at 1731520930288) (:by |u0)
+                                            :data $ {}
+                                              |T $ %{} :Leaf (:at 1731520930288) (:by |u0) (:text |param)
+                                              |b $ %{} :Leaf (:at 1731520930288) (:by |u0) (:text |i64)
                                           |h $ %{} :Expr (:at 1731434764973) (:by |u0)
                                             :data $ {}
                                               |T $ %{} :Leaf (:at 1731434766477) (:by |u0) (:text |result)
@@ -223,6 +229,7 @@
                         :data $ {}
                           |T $ %{} :Leaf (:at 1632075554947) (:by |u0) (:text |run-wat)
                           |j $ %{} :Leaf (:at 1632076062169) (:by |u0) (:text |code)
+                          |n $ %{} :Leaf (:at 1731521056444) (:by |u0) (:text "|\"main")
                           |r $ %{} :Leaf (:at 1632075573143) (:by |u0) (:text |13)
         |reload! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1632074478285) (:by |u0)

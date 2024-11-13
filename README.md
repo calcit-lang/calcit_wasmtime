@@ -17,7 +17,7 @@ format-to-wat
       l m n
 
 ; "currently only demonstrated i64->i64"
-run-wat "\"(module\n  (func (export \"main\") (param i64) (result i64)\n    get_local 0\n    i64.const 14\n    i64.add\n    return)\n)" 13
+run-wat "\"(module\n  (func (export \"main\") (param i64) (result i64)\n    get_local 0\n    i64.const 14\n    i64.add\n    return)\n)" |main 13
 ```
 
 ### Develop

@@ -18,7 +18,7 @@ fn main() -> Result<(), String> {
   let code = format_to_wat(vec![Edn::Quote(Cirru::List(tree))])?;
   println!("{}", code);
 
-  println!("{}", run_wat(vec![Edn::str(DEMO), Edn::Number(44.0)])?);
+  println!("{}", run_wat(vec![Edn::str(DEMO), Edn::str("main"), Edn::Number(44.0)])?);
 
   Ok(())
 }
