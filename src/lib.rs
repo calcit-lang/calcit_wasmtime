@@ -1,4 +1,4 @@
-use wasmtime::{Engine, Instance, Module, Store};
+use wasmtime::{Config, Engine, Instance, Module, Store};
 
 use cirru_edn::Edn;
 use cirru_parser::{format_to_lisp, Cirru};
@@ -25,13 +25,13 @@ pub fn format_to_wat(args: Vec<Edn>) -> Result<Edn, String> {
 /// currently on i64 is demoed
 #[no_mangle]
 pub fn run_wat(args: Vec<Edn>) -> Result<Edn, String> {
-  if args.len() != 2 {
-    return Err(format!("expected 2 arguments, got {}... {:?}", args.len(), args));
+  if args.len() != 3 {
+    return Err(format!("expected 3 arguments, got {}... {:?}", args.len(), args));
   }
 
-  let (wat, n) = match (&args[0], &args[1]) {
-    (Edn::Str(code), Edn::Number(n)) => ((**code).to_owned(), n),
-    (Edn::Quote(code), Edn::Number(n)) => match code {
+  let (wat, f_name, n) = match (&args[0], &args[1], &args[2]) {
+    (Edn::Str(code), Edn::Str(f_name), Edn::Number(n)) => ((**code).to_owned(), f_name, n),
+    (Edn::Quote(code), Edn::Str(f_name), Edn::Number(n)) => match code {
       Cirru::Leaf(_) => return Err(format!("expected expression, got: {}", code)),
       Cirru::List(xs) => {
         let mut lines: Vec<Cirru> = vec![];
@@ -39,20 +39,23 @@ pub fn run_wat(args: Vec<Edn>) -> Result<Edn, String> {
         for x in xs {
           lines.push(x.to_owned());
         }
-        (format_to_lisp(&lines)?, n)
+        (format_to_lisp(&lines)?, f_name, n)
       }
     },
-    (_, _) => return Err(format!("expected wat and initial number, got: {} {}", args[0], args[1])),
+    (_, _, _) => return Err(format!("expected wat and initial number, got: {} {}", args[0], args[1])),
   };
 
-  let engine = Engine::default();
+  print!("wat: {}", wat);
+
+  let config = Config::default().wasm_function_references(true).wasm_gc(true).to_owned();
+  let engine = Engine::new(&config).map_err(|e| format!("engine failed: {}", e))?;
   let module = Module::new(&engine, wat).map_err(|e| format!("loading wat: {:?}", e))?;
 
   let mut store = Store::new(&engine, 0);
 
   let instance = Instance::new(&mut store, &module, &[]).map_err(|e| format!("instance failed: {}", e))?;
   let entry_fn = instance
-    .get_typed_func::<i64, i64>(&mut store, "main")
+    .get_typed_func::<i64, i64>(&mut store, f_name)
     .map_err(|e| format!("get entry failed: {}", e))?;
 
   let ret = entry_fn

@@ -12,8 +12,8 @@
               &call-dylib-edn (get-dylib-path "\"/dylibs/libcalcit_wasmtime") "\"format_to_wat" tree
         |run-wat $ %{} :CodeEntry (:doc |)
           :code $ quote
-            defn run-wat (code v0)
-              &call-dylib-edn (get-dylib-path "\"/dylibs/libcalcit_wasmtime") "\"run_wat" code v0
+            defn run-wat (code f-name v0)
+              &call-dylib-edn (get-dylib-path "\"/dylibs/libcalcit_wasmtime") "\"run_wat" code f-name v0
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns wasmtime.core $ :require
@@ -25,11 +25,17 @@
             defn main! () $ let
                 code
                   cirru-quote $ 
-                    module $ func (export "\"main") (param i64) (result i64) (local.get 0) (i64.const 14) (i64.add) (return)
+                    module
+                      type $A $ struct (field i32) (field i64)
+                      func (export "\"main") (param i64) (result i64) (local.get 0) (i64.const 14) (i64.add) (return)
+                      func (export "\"demo") (param i64) (result i64)
+                        local $t $ ref $A
+                        local.set $t $ struct.new $A (i32.const 10) (i64.const 11)
+                        struct.get $A 1 $ local.get $t
                   ; :: 'quote $ quote
                       "\"module" $ "\"func" ("\"export" "\"\"main") ("\"param" "\"i64") ("\"result" "\"i64") ("\"local.get" "\"0") ("\"i64.const" "\"14") ("\"i64.add") ("\"return")
               println code
-              println $ run-wat code 13
+              println $ run-wat code "\"main" 13
         |reload! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn reload! () $ println "\"TODO Reload"
