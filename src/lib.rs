@@ -3,13 +3,18 @@ use wasmtime::{Config, Engine, Instance, Module, Store};
 use cirru_edn::Edn;
 use cirru_parser::{format_to_lisp, Cirru};
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn abi_version() -> String {
   String::from("0.0.9")
 }
 
+#[unsafe(no_mangle)]
+pub fn edn_version() -> String {
+  cirru_edn::version().to_owned()
+}
+
 /// only implement very simple rules turning symbols in to lisp, NOT SOLID
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn format_to_wat(args: Vec<Edn>) -> Result<Edn, String> {
   println!("code: {:?}", args);
 
@@ -23,7 +28,7 @@ pub fn format_to_wat(args: Vec<Edn>) -> Result<Edn, String> {
 }
 
 /// currently on i64 is demoed
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub fn run_wat(args: Vec<Edn>) -> Result<Edn, String> {
   if args.len() != 3 {
     return Err(format!("expected 3 arguments, got {}... {:?}", args.len(), args));
