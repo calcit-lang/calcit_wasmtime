@@ -12,7 +12,7 @@ crate-type = ["rlib", "dylib"] # Creates dynamic lib
 
 [dependencies]
 cirru_parser = "0.2.4"
-cirru_edn = "0.7.4"
+cirru_edn = "0.8.0"
 wasmtime = { version = "26.0.1", features = ['gc'] }
 regex = "1.11"
 lazy_static = "1.5.0"
