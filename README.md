@@ -26,7 +26,7 @@ If you have have [calcit_runner](https://github.com/calcit-lang/calcit_runner.rs
 
 ```bash
 ./build.sh
-cr -1
+calcit calcit.cirru
 ```
 
 ### License
