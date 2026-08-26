@@ -2,7 +2,7 @@ extern crate calcit_wasmtime;
 
 use calcit_wasmtime::format_to_wat;
 use cirru_edn::Edn;
-use cirru_parser::{parse, Cirru};
+use cirru_parser::{Cirru, parse};
 
 #[test]
 fn format_tests() -> Result<(), String> {
