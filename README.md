@@ -24,6 +24,10 @@ run-wat "\"(module\n  (func (export \"main\") (param i64) (result i64)\n    get_
 
 If you have have [calcit_runner](https://github.com/calcit-lang/calcit_runner.rs) installed:
 
+`calcit.cirru` is the canonical source snapshot. The legacy `compact.cirru`
+copy has been retired; use Calcit's structured edit/query commands for source
+changes.
+
 ```bash
 ./build.sh
 calcit calcit.cirru
