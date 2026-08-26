@@ -2,6 +2,10 @@
 name = "calcit_wasmtime"
 version = "0.1.2"
 edition = "2024"
+description = "Wasmtime bindings for the Calcit language"
+license = "MIT"
+repository = "https://github.com/calcit-lang/calcit_wasmtime"
+readme = "README.md"
 
 [lib]
 name = "calcit_wasmtime"
