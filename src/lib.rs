@@ -1,7 +1,15 @@
 use wasmtime::{Config, Engine, Instance, Module, Store};
 
 use cirru_edn::Edn;
-use cirru_parser::{format_to_lisp, Cirru};
+use cirru_parser::{Cirru, format_to_lisp};
+use std::ffi::c_char;
+
+static FFI_BUILD_ID: &[u8] = concat!(env!("CALCIT_FFI_BUILD_ID"), "\0").as_bytes();
+
+#[unsafe(no_mangle)]
+pub extern "C" fn calcit_ffi_build_id() -> *const c_char {
+  FFI_BUILD_ID.as_ptr().cast()
+}
 
 #[unsafe(no_mangle)]
 pub fn abi_version() -> String {
