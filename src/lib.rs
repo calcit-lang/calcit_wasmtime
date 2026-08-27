@@ -2,16 +2,8 @@ use wasmtime::{Config, Engine, Instance, Module, Store};
 
 use cirru_edn::Edn;
 use cirru_parser::{Cirru, format_to_lisp};
-use std::ffi::c_char;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::{mem, ptr, slice};
-
-static FFI_BUILD_ID: &[u8] = concat!(env!("CALCIT_FFI_BUILD_ID"), "\0").as_bytes();
-
-#[unsafe(no_mangle)]
-pub extern "C" fn calcit_ffi_build_id() -> *const c_char {
-  FFI_BUILD_ID.as_ptr().cast()
-}
 
 #[repr(C)]
 pub struct CalcitFfiBuffer {
@@ -93,18 +85,7 @@ unsafe fn call_with_buffer(
   if write_buffer(output, bytes).is_err() { 2 } else { status }
 }
 
-#[unsafe(no_mangle)]
-pub fn abi_version() -> String {
-  String::from("0.0.9")
-}
-
-#[unsafe(no_mangle)]
-pub fn edn_version() -> String {
-  cirru_edn::version().to_owned()
-}
-
 /// only implement very simple rules turning symbols in to lisp, NOT SOLID
-#[unsafe(no_mangle)]
 pub fn format_to_wat(args: Vec<Edn>) -> Result<Edn, String> {
   println!("code: {:?}", args);
 
@@ -130,7 +111,6 @@ pub unsafe extern "C" fn format_to_wat_calcit_ffi_v1(request_ptr: *const u8, req
 }
 
 /// currently on i64 is demoed
-#[unsafe(no_mangle)]
 pub fn run_wat(args: Vec<Edn>) -> Result<Edn, String> {
   if args.len() != 3 {
     return Err(format!("expected 3 arguments, got {}... {:?}", args.len(), args));
