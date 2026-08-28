@@ -28,6 +28,18 @@ If you have have [calcit_runner](https://github.com/calcit-lang/calcit_runner.rs
 copy has been retired; use Calcit's structured edit/query commands for source
 changes.
 
+### 共享 FFI 基础层 / Shared FFI foundation
+
+本模块使用 [`calcit_native_ffi`](https://github.com/calcit-lang/calcit-native-ffi)
+维护 C-safe buffer layout、allocator ownership、request decode 与 response
+encode。Wasmtime engine/module 执行和现有 0/1/2 业务状态码仍由本仓库维护。
+
+This module uses
+[`calcit_native_ffi`](https://github.com/calcit-lang/calcit-native-ffi) for the
+C-safe buffer layout, allocator ownership, request decoding, and response
+encoding. Wasmtime engine/module execution and the existing 0/1/2 business
+status mapping remain owned by this repository.
+
 ```bash
 ./build.sh
 calcit calcit.cirru
