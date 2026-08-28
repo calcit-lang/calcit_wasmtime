@@ -1,39 +1,9 @@
 use wasmtime::{Config, Engine, Instance, Module, Store};
 
-use calcit_native_ffi::{CalcitFfiBuffer, decode_request, encode_edn, write_output};
 use cirru_edn::Edn;
 use cirru_parser::{Cirru, format_to_lisp};
-use std::panic::{AssertUnwindSafe, catch_unwind};
 
 calcit_native_ffi::export_buffer_abi_v1!();
-
-unsafe fn call_with_buffer(
-  request_ptr: *const u8,
-  request_len: usize,
-  output: *mut CalcitFfiBuffer,
-  f: fn(Vec<Edn>) -> Result<Edn, String>,
-) -> i32 {
-  let result = catch_unwind(AssertUnwindSafe(|| {
-    // SAFETY: the host retains the request allocation for this synchronous call.
-    let args = unsafe { decode_request(request_ptr, request_len) }?;
-    f(args)
-  }));
-
-  let (status, bytes) = match result {
-    Ok(Ok(value)) => match encode_edn(&value) {
-      Ok(bytes) => (0, bytes),
-      Err(error) => (2, format!("failed to encode Calcit FFI response: {error}").into_bytes()),
-    },
-    Ok(Err(error)) => (1, error.into_bytes()),
-    Err(_) => (2, b"panic inside Calcit FFI module".to_vec()),
-  };
-  // SAFETY: the exported function contract requires a writable output slot.
-  if unsafe { write_output(output, bytes) } == calcit_native_ffi::status::OK {
-    status
-  } else {
-    2
-  }
-}
 
 /// only implement very simple rules turning symbols in to lisp, NOT SOLID
 pub fn format_to_wat(args: Vec<Edn>) -> Result<Edn, String> {
@@ -48,17 +18,7 @@ pub fn format_to_wat(args: Vec<Edn>) -> Result<Edn, String> {
   Ok(Edn::str(format_to_lisp(&lines)?))
 }
 
-#[unsafe(no_mangle)]
-/// Call `format_to_wat` through Calcit FFI buffer protocol v1.
-///
-/// # Safety
-///
-/// `request_ptr` must reference `request_len` readable bytes for this call,
-/// and `output` must point to writable storage for one `CalcitFfiBuffer`.
-pub unsafe extern "C" fn format_to_wat_calcit_ffi_v1(request_ptr: *const u8, request_len: usize, output: *mut CalcitFfiBuffer) -> i32 {
-  // SAFETY: the export contract forwards the caller's validated buffers.
-  unsafe { call_with_buffer(request_ptr, request_len, output, format_to_wat) }
-}
+calcit_native_ffi::export_edn_buffer_method_v1!(format_to_wat_calcit_ffi_v1, format_to_wat);
 
 /// currently on i64 is demoed
 pub fn run_wat(args: Vec<Edn>) -> Result<Edn, String> {
@@ -102,17 +62,7 @@ pub fn run_wat(args: Vec<Edn>) -> Result<Edn, String> {
   Ok(Edn::Number(ret as f64))
 }
 
-#[unsafe(no_mangle)]
-/// Call `run_wat` through Calcit FFI buffer protocol v1.
-///
-/// # Safety
-///
-/// `request_ptr` must reference `request_len` readable bytes for this call,
-/// and `output` must point to writable storage for one `CalcitFfiBuffer`.
-pub unsafe extern "C" fn run_wat_calcit_ffi_v1(request_ptr: *const u8, request_len: usize, output: *mut CalcitFfiBuffer) -> i32 {
-  // SAFETY: the export contract forwards the caller's validated buffers.
-  unsafe { call_with_buffer(request_ptr, request_len, output, run_wat) }
-}
+calcit_native_ffi::export_edn_buffer_method_v1!(run_wat_calcit_ffi_v1, run_wat);
 
 // quoted code in edn, into Cirru nodes
 fn edn_to_cirru(expr: &Edn) -> Result<Cirru, String> {
@@ -139,7 +89,8 @@ fn edn_to_cirru(expr: &Edn) -> Result<Cirru, String> {
 
 #[cfg(test)]
 mod ffi_buffer_tests {
-  use super::{CalcitFfiBuffer, calcit_ffi_buffer_free, run_wat_calcit_ffi_v1};
+  use super::{calcit_ffi_buffer_free, run_wat_calcit_ffi_v1};
+  use calcit_native_ffi::CalcitFfiBuffer;
   use cirru_edn::{Edn, EdnListView};
   use std::slice;
 

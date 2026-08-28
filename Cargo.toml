@@ -15,7 +15,7 @@ crate-type = ["rlib", "cdylib"] # Keep Rust linking support while exposing only 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-calcit_native_ffi = "0.1.0"
+calcit_native_ffi = "0.1.1"
 cirru_parser = "0.2.4"
 cirru_edn = "0.8.0"
 wasmtime = { version = "26.0.1", features = ['gc'] }
