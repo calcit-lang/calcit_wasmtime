@@ -20,6 +20,10 @@ format-to-wat
 run-wat "\"(module\n  (func (export \"main\") (param i64) (result i64)\n    get_local 0\n    i64.const 14\n    i64.add\n    return)\n)" |main 13
 ```
 
+See [WAT execution boundary](docs/wat-execution.md) for the supported function
+shape, synchronous execution, failure behavior, and untrusted-code limits. The
+page is indexed by `calcit docs read/search`.
+
 ### Develop
 
 If you have have [calcit_runner](https://github.com/calcit-lang/calcit_runner.rs) installed:
