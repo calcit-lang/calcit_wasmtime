@@ -6,6 +6,9 @@ on:
 
 name: Test
 
+permissions:
+  contents: read
+
 jobs:
   build_and_test:
     name: Test
@@ -13,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: calcit-lang/setup-calcit@v1.3.0
+      - uses: calcit-lang/setup-calcit@704b3f5cd6f9ce3bd1e0c926dbdd1d181adb8180 # v1
         with:
           tools: calcit,caps
 
@@ -40,7 +43,7 @@ jobs:
 
       - run: rm -rfv dylibs && mkdir dylibs/ && cp -v target/release/libcalcit_wasmtime.so dylibs/
 
-      - run: caps --ci
+      - run: caps --strict --ci
 
       - run: calcit calcit.cirru edit format && git diff --exit-code -- calcit.cirru
 
