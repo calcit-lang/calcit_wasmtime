@@ -1,23 +1,37 @@
+name: Validate release
+
 on:
   release:
     types: [created]
 
-name: Publish to crate
+permissions:
+  contents: read
 
 jobs:
-  publish:
-    name: Publish to cargo
+  validate:
+    name: Validate Calcit module release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: clippy
 
+      - uses: calcit-lang/setup-calcit@v1
+        with:
+          tools: calcit,caps
+
+      - name: Validate Calcit module
+        run: |
+          caps --strict --ci
+          calcit calcit.cirru edit format
+          git diff --exit-code -- calcit.cirru
+          calcit calcit.cirru --check-only
+
       - run: cargo test
 
-      - uses: katyo/publish-crates@v1
-        with:
-          registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - run: cargo build --release
