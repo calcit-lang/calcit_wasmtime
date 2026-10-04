@@ -21,17 +21,21 @@ jobs:
           toolchain: stable
           components: clippy
 
-      - uses: calcit-lang/setup-calcit@v1
+      - uses: calcit-lang/setup-calcit@ca701be5a471759e442aa053cd100720bbe1f09f # v1.5.0
         with:
+          version: "0.28.0"
           tools: calcit,caps
+          caps-version: "0.1.1"
 
       - name: Validate Calcit module
         run: |
           caps --strict --ci
+          caps verify --toolchain
           calcit calcit.cirru edit format
           git diff --exit-code -- calcit.cirru
-          calcit calcit.cirru --check-only
+          calcit calcit.cirru --strict-types --warn-dyn-method --check-only
+          calcit calcit.cirru analyze check-public --ns wasmtime.core --ns wasmtime.util --ns wasmtime.demo
 
-      - run: cargo test
+      - run: cargo test --locked
 
-      - run: cargo build --release
+      - run: cargo build --locked --release

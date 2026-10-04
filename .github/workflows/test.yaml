@@ -18,9 +18,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: calcit-lang/setup-calcit@704b3f5cd6f9ce3bd1e0c926dbdd1d181adb8180 # v1
+      - uses: calcit-lang/setup-calcit@ca701be5a471759e442aa053cd100720bbe1f09f # v1.5.0
         with:
+          version: "0.28.0"
           tools: calcit,caps
+          caps-version: "0.1.1"
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -28,11 +30,11 @@ jobs:
           components: clippy
 
       - run: cargo fmt --check
-      - run: cargo test
-      - run: cargo clippy --all-targets -- -D warnings
-      - run: cargo run --example try_api
+      - run: cargo test --locked
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - run: cargo run --locked --example try_api
 
-      - run: cargo build --release
+      - run: cargo build --locked --release
 
       - name: Verify versioned C-safe module exports
         run: |
@@ -43,12 +45,14 @@ jobs:
           grep -q ' run_wat_calcit_ffi_v1$' <<<"$exports"
           ! grep -Eq ' (abi_version|edn_version|format_to_wat|run_wat|calcit_ffi_build_id)$' <<<"$exports"
 
-      - run: rm -rfv dylibs && mkdir dylibs/ && cp -v target/release/libcalcit_wasmtime.so dylibs/
+      - run: mkdir -p dylibs && cp -v target/release/libcalcit_wasmtime.so dylibs/
 
       - run: caps --strict --ci
+      - run: caps verify --toolchain
 
       - run: calcit calcit.cirru edit format && git diff --exit-code -- calcit.cirru
 
-      - run: calcit calcit.cirru --check-only
+      - run: calcit calcit.cirru --strict-types --warn-dyn-method --check-only
+      - run: calcit calcit.cirru analyze check-public --ns wasmtime.core --ns wasmtime.util --ns wasmtime.demo
 
       - run: calcit calcit.cirru
