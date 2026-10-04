@@ -3,10 +3,7 @@
   :about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --contract` before mutations; use `--full` for first orientation or changed contract digest. Manual edits must follow format and schema conventions, then run `calcit edit format`."
   :package |wasmtime
   :entries $ {} $ :default
-    {} (:description |)
-      :init-fn 'wasmtime.demo/main!
-      :mode :native
-      :reload-fn 'wasmtime.demo/reload!
+    {} (:description |) (:init-fn 'wasmtime.demo/main!) (:mode :native) (:reload-fn 'wasmtime.demo/reload!) (:target :native)
       :feature-policy $ {}
       :modules $ []
       :type-slots $ {}
@@ -15,17 +12,17 @@
       :defs $ {}
         'format-to-wat $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn format-to-wat (tree)
-            &call-dylib-edn
-              get-dylib-path |/dylibs/libcalcit_wasmtime
-              , |format_to_wat tree
+            let
+                value $ &call-dylib-edn (get-dylib-path |/dylibs/libcalcit_wasmtime) |format_to_wat tree
+              if (string? value) value $ raise |Expected-string-from-format_to_wat
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
             :args $ [] 'Dynamic
         'run-wat $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn run-wat (code f-name v0)
-            &call-dylib-edn
-              get-dylib-path |/dylibs/libcalcit_wasmtime
-              , |run_wat code f-name v0
+            let
+                value $ &call-dylib-edn (get-dylib-path |/dylibs/libcalcit_wasmtime) |run_wat code f-name v0
+              if (number? value) value $ raise |Expected-number-from-run_wat
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ [] 'Dynamic 'String 'Number
