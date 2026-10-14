@@ -108,7 +108,7 @@ dependencies = [
 
 [[package]]
 name = "calcit_wasmtime"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
  "calcit_native_ffi",
  "cirru_edn",

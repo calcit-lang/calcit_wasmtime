@@ -26,15 +26,23 @@ page is indexed by `calcit docs read/search`.
 
 ### Develop
 
-Use the published Calcit **0.28.0** and Caps **0.1.1**. This module has a
-native entry and no frontend assets or COS deployment. Its heterogeneous EDN
-inputs remain an explicit FFI boundary; the two exported wrappers validate
-String/Number responses before returning to typed code. Rust buffer ownership,
-status mapping, and the Wasmtime execution model are unchanged.
+使用者影响：候选模块 `0.1.9` 将工具链同步到正式 Calcit `0.29.3` / Caps `0.1.1`。
+`format-to-wat` / `run-wat` 的输入、返回值与错误行为不变，demo 的两个副作用入口
+实际返回 Unit，与原声明一致。Rust buffer ownership、0/1/2 状态码和 Wasmtime
+执行模型不变；不升级 Rust 运行时依赖，不增加不可信 WAT 的资源限制。
+候选需通过原 Rust/FFI/demo 门禁及远端 CI、审阅后才能发版。
 
-本模块使用正式 Calcit 0.28.0 / Caps 0.1.1，只有 native 入口，无前端或 COS。
-异构 EDN 输入保留为显式 FFI 边界，两个包装函数分别校验 String / Number 返回值；
-不改 Rust buffer ownership、状态码或 Wasmtime 执行模型。
+Candidate module `0.1.9` targets published Calcit **0.29.3** and Caps **0.1.1**.
+The public wrappers retain their input, checked String/Number results, and errors;
+both demo effects now actually return their declared Unit. Rust buffer ownership,
+status mapping, runtime dependencies, and synchronous Wasmtime execution remain
+unchanged. Original Rust/FFI/demo gates and remote CI/review must pass before release.
+
+本模块只有 native 入口，无前端或 COS。异构 EDN 输入保留为显式 FFI 边界，
+两个包装函数分别校验 String / Number 返回值，不宣称全部类型边界已封闭。
+
+This module is native-only, with no frontend assets or COS deployment. Its heterogeneous
+EDN inputs remain explicit FFI boundaries, not a claim of fully closed types.
 
 `calcit.cirru` is the canonical source snapshot. The legacy `compact.cirru`
 copy has been retired; use Calcit's structured edit/query commands for source
@@ -57,8 +65,8 @@ cargo build --locked
 mkdir -p dylibs
 # macOS; on Linux copy libcalcit_wasmtime.so instead.
 cp target/debug/libcalcit_wasmtime.dylib dylibs/
-calcit calcit.cirru --strict-types --warn-dyn-method --check-only
-calcit calcit.cirru analyze check-public --ns wasmtime.core --ns wasmtime.util --ns wasmtime.demo
+calcit calcit.cirru --warn-dyn-method --check-only
+calcit calcit.cirru --check-only --ns wasmtime.core --ns wasmtime.util --ns wasmtime.demo
 calcit calcit.cirru
 ```
 

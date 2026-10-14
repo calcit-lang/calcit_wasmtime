@@ -47,11 +47,12 @@
                     |module $ |func (|export "|\"main") (|param |i64) (|result |i64) (|local.get |0) (|i64.const |14) (|i64.add) (|return)
               println code
               println $ run-wat code |main 13
+              , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
         'reload! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn reload! () (println "|TODO Reload")
+          :code $ quote $ defn reload! () (println "|TODO Reload") &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []

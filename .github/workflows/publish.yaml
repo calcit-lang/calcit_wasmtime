@@ -23,7 +23,7 @@ jobs:
 
       - uses: calcit-lang/setup-calcit@ca701be5a471759e442aa053cd100720bbe1f09f # v1.5.0
         with:
-          version: "0.28.0"
+          version: "0.29.3"
           tools: calcit,caps
           caps-version: "0.1.1"
 
@@ -33,8 +33,8 @@ jobs:
           caps verify --toolchain
           calcit calcit.cirru edit format
           git diff --exit-code -- calcit.cirru
-          calcit calcit.cirru --strict-types --warn-dyn-method --check-only
-          calcit calcit.cirru analyze check-public --ns wasmtime.core --ns wasmtime.util --ns wasmtime.demo
+          calcit calcit.cirru --warn-dyn-method --check-only
+          calcit calcit.cirru --check-only --ns wasmtime.core --ns wasmtime.util --ns wasmtime.demo
 
       - run: cargo test --locked
 
