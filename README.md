@@ -8,15 +8,16 @@ under `wasmtime.core`:
 
 ```cirru.no-check
 ; "generate lisp style code from quoted code"
-format-to-wat
-  quote $
-    a b
-    c d
-    e f (g h)
-      ;; i j $ k
-      l m n
+
+format-to-wat $ quote $
+  a b
+  c d
+  e f (g h)
+    ;; i j $ k
+    l m n
 
 ; "currently only demonstrated i64->i64"
+
 run-wat "|(module (func (export \"main\") (param i64) (result i64) local.get 0 i64.const 14 i64.add))" |main 13
 ```
 
@@ -26,30 +27,33 @@ page is indexed by `calcit docs read/search`.
 
 ### Develop
 
-使用者影响：候选模块 `0.1.10` 将工具链同步到正式 Calcit `0.30.0` / Caps `0.1.1`。
+使用者影响：本轮源码声明同步到已发布的 Calcit `0.30.1-alpha.5` / Caps `0.1.1`。
 `format-to-wat` / `run-wat` 的输入、返回值与错误行为不变，demo 的两个副作用入口
-实际返回 Unit，与原声明一致。Rust buffer ownership、0/1/2 状态码和 Wasmtime
+继续实际返回 Unit，与原声明一致。Rust buffer ownership、0/1/2 状态码和 Wasmtime
 执行模型不变；不升级 Rust 运行时依赖，不增加不可信 WAT 的资源限制。
-候选需通过原 Rust/FFI/demo 门禁及远端 CI、审阅后才能发版。
+已发布的 Git 模块 `0.1.10` tag 保持原内容，本轮不发版；正式 `0.30.1` 当前
+没有 macOS 二进制，本轮不声称完成正式版的跨平台兼容验收。
 
-Candidate module `0.1.10` targets published Calcit **0.30.0** and Caps **0.1.1**.
+Current source targets published Calcit **0.30.1-alpha.5** and Caps **0.1.1**.
 The public wrappers retain their input, checked String/Number results, and errors;
-both demo effects now actually return their declared Unit. Rust buffer ownership,
+both demo effects still return their declared Unit. Rust buffer ownership,
 status mapping, runtime dependencies, and synchronous Wasmtime execution remain
-unchanged. Original Rust/FFI/demo gates and remote CI/review must pass before release.
+unchanged. The published Git module `0.1.10` tag stays unchanged; no release is made.
+Stable `0.30.1` assets currently lack a macOS binary, so this is not a claim of
+complete cross-platform stable-version acceptance.
 
-本次从 `0.1.9` 升级仅把平台后缀宏的弃用 `case-default` 改为 `match`，
+此前 `0.1.10` 已把平台后缀宏的弃用 `case-default` 改为 `match`，
 保留 macOS `.dylib`、Windows `.dll`、其他平台 `.so` 的映射；不修改 Rust 源码、
 crate 版本或 Cargo.lock。另更新 Git 模块工具链、说明和完整 strict 门禁；测试与 release workflow
 均从同一 `deps.cirru` 选择 CLI。不增加 checker、改写规则、测试框架、类型预算
-或 alpha 依赖。Rust crate 仍禁止发布；正式 Git tag 发布前不要引用候选版本。
+或 alpha 模块依赖。Rust crate 仍禁止发布；本轮只迁移 CLI 声明和说明。
 
-This update from `0.1.9` replaces the platform suffix macro's deprecated
+The earlier `0.1.10` update replaced the platform suffix macro's deprecated
 `case-default` with `match`, preserving the `.dylib`/`.dll`/`.so` mapping.
 Rust sources, crate version and Cargo.lock are unchanged. Both workflows select the CLI from `deps.cirru` and run
 complete strict verification. No checker, rewrite rule, test framework, type
-budget or alpha dependency is added. Rust crate publishing stays disabled;
-do not depend on the candidate before its Git module tag is released.
+budget or alpha module dependency is added. Rust crate publishing stays disabled;
+this round only migrates the CLI declaration and documentation.
 
 本模块只有 native 入口，无前端或 COS。异构 EDN 输入保留为显式 FFI 边界，
 两个包装函数分别校验 String / Number 返回值，不宣称全部类型边界已封闭。
