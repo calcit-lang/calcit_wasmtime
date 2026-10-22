@@ -52,7 +52,11 @@ jobs:
 
       - run: calcit calcit.cirru edit format && git diff --exit-code -- calcit.cirru
 
-      - run: calcit calcit.cirru fix --workflow strict --verify --format edn
+      - name: Verify complete strict workflow
+        run: |
+          set -euo pipefail
+          calcit calcit.cirru fix --workflow strict --verify --format json | jq -e '.data.workflow.status == "passed" and .diagnostics == []'
+          calcit calcit.cirru --check-only --all-defs
       - run: calcit calcit.cirru --check-only --ns wasmtime.core --ns wasmtime.util --ns wasmtime.demo
 
       - run: calcit calcit.cirru

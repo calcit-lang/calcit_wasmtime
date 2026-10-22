@@ -27,20 +27,20 @@ page is indexed by `calcit docs read/search`.
 
 ### Develop
 
-使用者影响：本轮源码声明同步到已发布的 Calcit `0.30.1-alpha.5` / Caps `0.1.1`。
+使用者影响：本轮源码声明同步到正式 Calcit `0.30.1` / Caps `0.1.1`。
 `format-to-wat` / `run-wat` 的输入、返回值与错误行为不变，demo 的两个副作用入口
 继续实际返回 Unit，与原声明一致。Rust buffer ownership、0/1/2 状态码和 Wasmtime
 执行模型不变；不升级 Rust 运行时依赖，不增加不可信 WAT 的资源限制。
 已发布的 Git 模块 `0.1.10` tag 保持原内容，本轮不发版；正式 `0.30.1` 当前
-没有 macOS 二进制，本轮不声称完成正式版的跨平台兼容验收。
+没有 macOS 二进制；正式工具链验收通过 Linux CI 执行，不声称完成 macOS / Windows 的正式版运行验收。
 
-Current source targets published Calcit **0.30.1-alpha.5** and Caps **0.1.1**.
+Current source targets stable Calcit **0.30.1** and Caps **0.1.1**.
 The public wrappers retain their input, checked String/Number results, and errors;
 both demo effects still return their declared Unit. Rust buffer ownership,
 status mapping, runtime dependencies, and synchronous Wasmtime execution remain
 unchanged. The published Git module `0.1.10` tag stays unchanged; no release is made.
-Stable `0.30.1` assets currently lack a macOS binary, so this is not a claim of
-complete cross-platform stable-version acceptance.
+Stable `0.30.1` assets currently lack a macOS binary. Stable-toolchain acceptance
+runs in Linux CI; macOS / Windows execution with the stable CLI is not claimed.
 
 此前 `0.1.10` 已把平台后缀宏的弃用 `case-default` 改为 `match`，
 保留 macOS `.dylib`、Windows `.dll`、其他平台 `.so` 的映射；不修改 Rust 源码、
@@ -82,7 +82,8 @@ cargo build --locked
 mkdir -p dylibs
 # macOS; on Linux copy libcalcit_wasmtime.so instead.
 cp target/debug/libcalcit_wasmtime.dylib dylibs/
-calcit calcit.cirru fix --workflow strict --verify --format edn
+calcit calcit.cirru fix --workflow strict --verify --format json | jq -e '.data.workflow.status == "passed" and .diagnostics == []'
+calcit calcit.cirru --check-only --all-defs
 calcit calcit.cirru --check-only --ns wasmtime.core --ns wasmtime.util --ns wasmtime.demo
 calcit calcit.cirru
 ```
