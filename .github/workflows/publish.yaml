@@ -29,11 +29,13 @@ jobs:
 
       - name: Validate Calcit module
         run: |
+          set -euo pipefail
           caps --strict --ci
           caps verify --toolchain
           calcit calcit.cirru edit format
           git diff --exit-code -- calcit.cirru
-          calcit calcit.cirru fix --workflow strict --verify --format edn
+          calcit calcit.cirru fix --workflow strict --verify --format json | jq -e '.data.workflow.status == "passed" and .diagnostics == []'
+          calcit calcit.cirru --check-only --all-defs
           calcit calcit.cirru --check-only --ns wasmtime.core --ns wasmtime.util --ns wasmtime.demo
 
       - run: cargo test --locked
