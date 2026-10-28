@@ -87,6 +87,11 @@ C-safe buffer layout, allocator ownership, request decoding, and response
 encoding. Wasmtime engine/module execution and the existing 0/1/2 business
 status mapping remain owned by this repository.
 
+运行以下检查前，请先安装或选择正式 Calcit **0.31.0** CLI，并用 `calcit --version` 确认当前版本。
+
+Before running these checks, install or select the official Calcit **0.31.0** CLI
+and confirm the selected version with `calcit --version`.
+
 ```bash
 cargo build --locked
 mkdir -p dylibs
