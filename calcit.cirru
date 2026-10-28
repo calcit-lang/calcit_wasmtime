@@ -16,16 +16,14 @@
                 value $ &call-dylib-edn (get-dylib-path |/dylibs/libcalcit_wasmtime) |format_to_wat tree
               if (string? value) value $ raise |Expected-string-from-format_to_wat
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ [] 'Dynamic
+          :schema $ quote $ Fn Dynamic (-> String)
         'run-wat $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn run-wat (code f-name v0)
             let
                 value $ &call-dylib-edn (get-dylib-path |/dylibs/libcalcit_wasmtime) |run_wat code f-name v0
               if (number? value) value $ raise |Expected-number-from-run_wat
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'Dynamic 'String 'Number
+          :schema $ quote $ Fn Dynamic String Number (-> Number)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns wasmtime.core
           :require $ wasmtime.util :refer $ get-dylib-path
@@ -49,13 +47,11 @@
               println $ run-wat code |main 13
               , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
+          :schema $ quote $ Fn (-> Unit)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! () (println "|TODO Reload") &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
+          :schema $ quote $ Fn (-> Unit)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns wasmtime.demo
           :require $ wasmtime.core :refer $ run-wat format-to-wat
@@ -65,22 +61,19 @@
           :code $ quote $ defmacro get-dylib-ext ()
             match (&get-os) (:macos |.dylib) (:windows |.dll) (_ |.so)
           :examples $ []
-          :schema $ :: 'Macro $ {}
-            :capabilities $ #{} :platform-read
-            :expansion $ :: 'Expr 'String
-            :required $ []
+          :schema $ quote $ Macro
+            -> $ Expr String
+            :capabilities :platform-read
         'get-dylib-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-dylib-path (p)
             str (or-current-path calcit-dirname) p $ get-dylib-ext
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ [] 'String
+          :schema $ quote $ Fn String (-> String)
         'or-current-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn or-current-path (p)
             if (blank? p) |. p
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ [] 'String
+          :schema $ quote $ Fn String (-> String)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns wasmtime.util
           :require $ wasmtime.$meta :refer $ calcit-dirname calcit-filename
