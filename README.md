@@ -27,20 +27,20 @@ page is indexed by `calcit docs read/search`.
 
 ### Develop
 
-使用者影响：本轮源码声明同步到正式 Calcit `0.30.1` / Caps `0.1.1`。
+使用者影响：本轮源码声明同步到正式 Calcit `0.31.0` / Caps `0.1.1`。
 `format-to-wat` / `run-wat` 的输入、返回值与错误行为不变，demo 的两个副作用入口
 继续实际返回 Unit，与原声明一致。Rust buffer ownership、0/1/2 状态码和 Wasmtime
 执行模型不变；不升级 Rust 运行时依赖，不增加不可信 WAT 的资源限制。
-已发布的 Git 模块 `0.1.10` tag 保持原内容，本轮不发版；正式 `0.30.1` 当前
-没有 macOS 二进制；正式工具链验收通过 Linux CI 执行，不声称完成 macOS / Windows 的正式版运行验收。
+已发布的 Git 模块 `0.1.10` tag 保持原内容，本轮不发版。
+使用固定正式 0.31.0 CLI 验证本地 macOS 和原 Linux CI；不声称完成 Windows 运行验收。
 
-Current source targets stable Calcit **0.30.1** and Caps **0.1.1**.
+Current source targets stable Calcit **0.31.0** and Caps **0.1.1**.
 The public wrappers retain their input, checked String/Number results, and errors;
 both demo effects still return their declared Unit. Rust buffer ownership,
 status mapping, runtime dependencies, and synchronous Wasmtime execution remain
 unchanged. The published Git module `0.1.10` tag stays unchanged; no release is made.
-Stable `0.30.1` assets currently lack a macOS binary. Stable-toolchain acceptance
-runs in Linux CI; macOS / Windows execution with the stable CLI is not claimed.
+A fixed official 0.31.0 CLI is used for local macOS checks and the original Linux
+CI. Windows runtime acceptance is not claimed.
 
 此前 `0.1.10` 已把平台后缀宏的弃用 `case-default` 改为 `match`，
 保留 macOS `.dylib`、Windows `.dll`、其他平台 `.so` 的映射；不修改 Rust 源码、
@@ -64,6 +64,16 @@ EDN inputs remain explicit FFI boundaries, not a claim of fully closed types.
 `calcit.cirru` is the canonical source snapshot. The legacy `compact.cirru`
 copy has been retired; use Calcit's structured edit/query commands for source
 changes.
+
+本地 macOS 现已通过正式 0.31.0 的全部 9 个定义、7 个公开定义与完整 strict，
+原 5 项 Rust 测试、fmt、strict Clippy、Rust 示例（47）、release 动态库 Demo（27）
+及 C-safe 导出审计。两处异构输入 Dynamic 仍保留，后续类型入口设计见
+[#27](https://github.com/calcit-lang/calcit_wasmtime/issues/27)；不以伪泛型隐藏它们。
+
+Local macOS passes formal 0.31.0 all9/public7 definitions and strict, the five
+original Rust tests, fmt, strict Clippy, Rust example (47), fresh release dylib
+Demo (27), and C-safe exports. The two heterogeneous Dynamic inputs remain;
+concrete entry-point design is tracked in [#27](https://github.com/calcit-lang/calcit_wasmtime/issues/27).
 
 ### 共享 FFI 基础层 / Shared FFI foundation
 
