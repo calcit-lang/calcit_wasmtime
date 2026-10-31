@@ -14,11 +14,11 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@v5.1.0
         with:
           persist-credentials: false
 
-      - uses: calcit-lang/setup-calcit@ca701be5a471759e442aa053cd100720bbe1f09f # v1.5.0
+      - uses: calcit-lang/setup-calcit@v1.5.0
         with:
           deps-file: deps.cirru
           tools: calcit,caps
