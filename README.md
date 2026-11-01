@@ -44,7 +44,8 @@ Candidate Git module **0.2.0** pairs official Calcit **0.34.0** and Caps **0.1.1
 `run-wat` accepts the transparent `WatSource = String | CirruQuote` union. Both existing
 forms pass through without wrappers or ABI changes. Previously invalid input kinds fail
 static checking earlier, so this is a non-patch API tightening; narrow Dynamic callers first.
-Quote roots, WAT validity, exports and numeric conversion remain native checks.
+Quote roots, WAT validity and exports remain native checks. Numeric conversion
+still casts inputs to i64 and results to f64 without checking precision loss.
 The recursive EDN formatter stays intentionally open. Rust implementation, lock, crate,
 synchronous execution and status mapping are unchanged. The candidate still requires
 original Linux CI and exact-head review before publication; existing tags stay unchanged.

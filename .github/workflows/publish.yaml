@@ -42,3 +42,10 @@ jobs:
       - run: cargo test --locked
 
       - run: cargo build --locked --release
+
+      - name: Verify native WAT inputs
+        run: |
+          set -euo pipefail
+          mkdir -p dylibs
+          cp target/release/libcalcit_wasmtime.so dylibs/
+          calcit calcit.cirru test --tag native --require-match

@@ -13,3 +13,12 @@ kinds is a non-patch contract change. Recursive EDN formatting remains open;
 numeric behavior, ABI, Rust and lock remain unchanged. One attached native test
 replays both real WAT calls, retaining every original gate. Release requires
 exact-head CI and review.
+
+## 2026-11-02 04:55 评审修正 / Review corrections
+
+补齐英文输入合同，并明确数值是未经精度验证的原生 cast；release 验证复制新构建的
+动态库后运行同一原生附带测试，不增加另一套检查脚本。
+
+Add the English input contract and distinguish unchecked numeric casts from
+validation. Release validation copies its fresh library and runs the same
+attached native test, without another checker script.
