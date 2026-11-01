@@ -24,10 +24,11 @@ jobs:
           tools: calcit,caps
           caps-version: "0.1.1"
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions-rust-lang/setup-rust-toolchain@v2.0.0
         with:
           toolchain: stable
-          components: clippy
+          components: clippy,rustfmt
+          cache: false
 
       - run: cargo fmt --check
       - run: cargo test --locked
@@ -60,3 +61,5 @@ jobs:
       - run: calcit calcit.cirru --check-only --ns wasmtime.core --ns wasmtime.util --ns wasmtime.demo
 
       - run: calcit calcit.cirru
+
+      - run: calcit calcit.cirru test --tag native --require-match

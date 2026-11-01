@@ -10,6 +10,11 @@
   :files $ {}
     'wasmtime.core $ %{} 'FileEntry
       :defs $ {}
+        'WatSource $ %{} 'CodeEntry
+          :doc "|WAT text or CirruQuote passed unchanged to the native parser. Quote roots and WAT validity remain checked by the native binding."
+          :code $ quote $ defunion WatSource String CirruQuote
+          :examples $ []
+          :schema $ quote UnionDef
         'format-to-wat $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn format-to-wat (tree)
             let
@@ -23,7 +28,15 @@
                 value $ &call-dylib-edn (get-dylib-path |/dylibs/libcalcit_wasmtime) |run_wat code f-name v0
               if (number? value) value $ raise |Expected-number-from-run_wat
           :examples $ []
-          :schema $ quote $ Fn Dynamic String Number (-> Number)
+          :schema $ quote $ Fn wasmtime.core/WatSource String Number (-> Number)
+          :tests $ [] $ %{} 'TestEntry (:name |text-and-quoted-wat)
+            :code $ quote $ do
+              assert= 27 $ run-wat "|(module (func (export \"main\") (param i64) (result i64) local.get 0 i64.const 14 i64.add))" |main 13
+              assert= 27 $ run-wat
+                cirru-quote $
+                  module $ func (export |main) (param i64) (result i64) (local.get 0) (i64.const 14) (i64.add) (return)
+                , |main 13
+            :tags $ #{} :native :unit
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns wasmtime.core
           :require $ wasmtime.util :refer $ get-dylib-path
