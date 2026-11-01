@@ -19,7 +19,15 @@ entry_for:
 
 # WAT execution boundary
 
-`format-to-wat` converts supported quoted Calcit/Cirru data into lisp-style WAT text. `run-wat` accepts WAT text or a quoted expression, an exported function name, and one numeric argument. The selected export must have the shape `i64 -> i64`; its result is returned as Calcit `Number`.
+`run-wat` 首参数使用 `wasmtime.core/WatSource`（String 或 CirruQuote 的透明 union），
+继续接受 WAT 文本或引用表达式；其余参数为导出函数名和一个数值。
+Dynamic 调用方须先在边界收窄，引用是否为 list 根仍由 native 检查。
+
+`format-to-wat` converts supported quoted Calcit/Cirru data into lisp-style WAT text.
+`run-wat` takes `wasmtime.core/WatSource` (String or CirruQuote) as its first argument,
+followed by an export name and one numeric argument. Dynamic callers must narrow at
+the boundary; the native parser still checks that quoted inputs have list roots.
+The selected export must have the shape `i64 -> i64`; its result is returned as Calcit `Number`.
 
 ```cirru.no-check
 wasmtime.core/run-wat
