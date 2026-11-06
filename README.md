@@ -27,11 +27,9 @@ page is indexed by `calcit docs read/search`.
 
 ### Develop
 
-使用者影响：候选 Git 模块 **0.2.0** 配对正式 Calcit **0.34.0** / Caps **0.1.1**。
+使用者影响：候选 Git 模块 **0.2.1** 配对正式 Calcit **0.35.1** / Caps **0.1.1**。
 `run-wat` 首参数使用 `wasmtime.core/WatSource`，即 `String | CirruQuote` 的透明 union；
-原有文本和引用表达式直接传入，运行值与 C-safe ABI 不变。无其他输入种类被 Rust 接受；
-原来落到 native 的错误种类现在会更早被类型检查拒绝，Dynamic 调用方须先完成边界收窄，
-所以采用非 patch 版本。CirruQuote 的 list 根、WAT 有效性和 export 形状仍由原 native 检查。
+原有文本和引用表达式直接传入，运行值与 C-safe ABI 保持。自 0.2.0 起，Dynamic 调用方须先收窄输入种类。CirruQuote 的 list 根、WAT 有效性和 export 形状仍由原 native 检查。
 
 `format-to-wat` 继续接受原有递归 EDN List/标量/Quote，保留真实 Dynamic 边界；
 不使用伪泛型或递归 union 隐藏它。输入合同设计由
@@ -40,10 +38,10 @@ page is indexed by `calcit docs read/search`.
 Rust、Cargo.lock、crate 0.1.9、同步执行与 0/1/2 状态码不变。候选需完成原 Linux CI
 和精确提交评审后发布；现有 tag 不移动。
 
-Candidate Git module **0.2.0** pairs official Calcit **0.34.0** and Caps **0.1.1**.
+Candidate Git module **0.2.1** pairs official Calcit **0.35.1** and Caps **0.1.1**.
 `run-wat` accepts the transparent `WatSource = String | CirruQuote` union. Both existing
-forms pass through without wrappers or ABI changes. Previously invalid input kinds fail
-static checking earlier, so this is a non-patch API tightening; narrow Dynamic callers first.
+forms pass through without wrappers or ABI changes. Since 0.2.0, callers with Dynamic input
+must narrow the input kind first.
 Quote roots, WAT validity and exports remain native checks. Numeric conversion
 still casts inputs to i64 and results to f64 without checking precision loss.
 The recursive EDN formatter stays intentionally open. Rust implementation, lock, crate,
@@ -62,9 +60,9 @@ C-safe buffer layout, allocator ownership, request decoding, and response
 encoding. Wasmtime engine/module execution and the existing 0/1/2 business
 status mapping remain owned by this repository.
 
-运行以下检查前，请先安装或选择正式 Calcit **0.34.0** CLI，并用 `calcit --version` 确认当前版本。
+运行以下检查前，请先安装或选择正式 Calcit **0.35.1** CLI，并用 `calcit --version` 确认当前版本。
 
-Before running these checks, install or select the official Calcit **0.34.0** CLI
+Before running these checks, install or select the official Calcit **0.35.1** CLI
 and confirm the selected version with `calcit --version`.
 
 ```bash
