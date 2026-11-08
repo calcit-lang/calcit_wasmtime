@@ -22,6 +22,12 @@
               if (string? value) value $ raise |Expected-string-from-format_to_wat
           :examples $ []
           :schema $ quote $ Fn Dynamic (-> String) (:open :host)
+          :tests $ [] $ %{} 'TestEntry (:name |nil-and-nested-quote)
+            :code $ quote $ do
+              assert= "|\nnil\n" $ format-to-wat nil
+              assert= "|\n(module\n  (func (export \"main\") (param i64)))\n" $ format-to-wat $ [] (quote module)
+                cirru-quote $ func (export |main) (param i64)
+            :tags $ #{} :native :unit
         'run-wat $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn run-wat (code f-name v0)
             let
