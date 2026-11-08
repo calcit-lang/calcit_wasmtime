@@ -21,7 +21,7 @@
                 value $ &call-dylib-edn (get-dylib-path |/dylibs/libcalcit_wasmtime) |format_to_wat tree
               if (string? value) value $ raise |Expected-string-from-format_to_wat
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> String)
+          :schema $ quote $ Fn Dynamic (-> String) (:open :host)
         'run-wat $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn run-wat (code f-name v0)
             let
