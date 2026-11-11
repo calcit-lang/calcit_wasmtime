@@ -34,7 +34,7 @@
                 value $ &call-dylib-edn (get-dylib-path |/dylibs/libcalcit_wasmtime) |run_wat code f-name v0
               if (number? value) value $ raise |Expected-number-from-run_wat
           :examples $ []
-          :schema $ quote $ Fn wasmtime.core/WatSource String Number (-> Number)
+          :schema $ quote $ Fn WatSource String Number (-> Number)
           :tests $ [] $ %{} 'TestEntry (:name |text-and-quoted-wat)
             :code $ quote $ do
               assert= 27 $ run-wat "|(module (func (export \"main\") (param i64) (result i64) local.get 0 i64.const 14 i64.add))" |main 13
