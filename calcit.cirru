@@ -66,11 +66,11 @@
               println $ run-wat code |main 13
               , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :io)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! () (println "|TODO Reload") &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :io)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns wasmtime.demo
           :require $ wasmtime.core :refer $ run-wat format-to-wat
