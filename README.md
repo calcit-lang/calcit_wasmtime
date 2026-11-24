@@ -27,9 +27,9 @@ page is indexed by `calcit docs read/search`.
 
 ### Develop
 
-macOS 27.2.1 arm64 上 Rust 1.94.0 构建的 release 动态库可能因 LINKEDIT 对齐错误无法加载；同机 Rust 1.100.0 已通过加载与 native WAT 测试，详见 [#42](https://github.com/calcit-lang/calcit_wasmtime/issues/42)。
+macOS 27.2.1 arm64 / Rust 1.94 曾出现 release 动态库 LINKEDIT 对齐加载错误；现显式关闭 release 符号裁剪，同机加载与 native WAT 测试通过，并新增 macOS CI 验证，见 [#42](https://github.com/calcit-lang/calcit_wasmtime/issues/42)。
 
-On macOS 27.2.1 arm64, a release dylib built with Rust 1.94.0 may fail to load due to LINKEDIT alignment. Rust 1.100.0 was verified to load and run the native WAT tests on the same host; see [#42](https://github.com/calcit-lang/calcit_wasmtime/issues/42).
+A release dylib built with Rust 1.94 failed to load on macOS 27.2.1 arm64 due to LINKEDIT alignment. Explicitly disabling release symbol stripping passes loading and native WAT tests on the same host; macOS CI now checks it. See [#42](https://github.com/calcit-lang/calcit_wasmtime/issues/42).
 
 使用者影响：候选 Git 模块 **0.2.2** 配对正式 Calcit **0.45.1** / Caps **0.1.2**。
 `run-wat` 首参数使用 `wasmtime.core/WatSource`，即 `String | CirruQuote` 的透明 union；
