@@ -27,7 +27,11 @@ page is indexed by `calcit docs read/search`.
 
 ### Develop
 
-使用者影响：候选 Git 模块 **0.2.1** 配对正式 Calcit **0.45.0** / Caps **0.1.2**。
+macOS 27.2.1 arm64 上 Rust 1.94.0 构建的 release 动态库可能因 LINKEDIT 对齐错误无法加载；同机 Rust 1.100.0 已通过加载与 native WAT 测试，详见 [#42](https://github.com/calcit-lang/calcit_wasmtime/issues/42)。
+
+On macOS 27.2.1 arm64, a release dylib built with Rust 1.94.0 may fail to load due to LINKEDIT alignment. Rust 1.100.0 was verified to load and run the native WAT tests on the same host; see [#42](https://github.com/calcit-lang/calcit_wasmtime/issues/42).
+
+使用者影响：候选 Git 模块 **0.2.2** 配对正式 Calcit **0.45.1** / Caps **0.1.2**。
 `run-wat` 首参数使用 `wasmtime.core/WatSource`，即 `String | CirruQuote` 的透明 union；
 原有文本和引用表达式直接传入，运行值与 C-safe ABI 保持。自 0.2.0 起，Dynamic 调用方须先收窄输入种类。CirruQuote 的 list 根、WAT 有效性和 export 形状仍由原 native 检查。
 
@@ -38,7 +42,7 @@ page is indexed by `calcit docs read/search`.
 Rust、Cargo.lock、crate 0.1.9、同步执行与 0/1/2 状态码不变。候选需完成原 Linux CI
 和精确提交评审后发布；现有 tag 不移动。
 
-Candidate Git module **0.2.1** pairs official Calcit **0.45.0** and Caps **0.1.2**.
+Candidate Git module **0.2.2** pairs official Calcit **0.45.1** and Caps **0.1.2**.
 `run-wat` accepts the transparent `WatSource = String | CirruQuote` union. Both existing
 forms pass through without wrappers or ABI changes. Since 0.2.0, callers with Dynamic input
 must narrow the input kind first.
@@ -60,9 +64,9 @@ C-safe buffer layout, allocator ownership, request decoding, and response
 encoding. Wasmtime engine/module execution and the existing 0/1/2 business
 status mapping remain owned by this repository.
 
-运行以下检查前，请先安装或选择正式 Calcit **0.45.0** CLI，并用 `calcit --version` 确认当前版本。
+运行以下检查前，请先安装或选择正式 Calcit **0.45.1** CLI，并用 `calcit --version` 确认当前版本。
 
-Before running these checks, install or select the official Calcit **0.45.0** CLI
+Before running these checks, install or select the official Calcit **0.45.1** CLI
 and confirm the selected version with `calcit --version`.
 
 ```bash
