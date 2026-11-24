@@ -75,12 +75,7 @@ jobs:
         with:
           toolchain: 1.94.0
           cache: false
-      - uses: calcit-lang/setup-calcit@v1.5.2
-        with:
-          deps-file: deps.cirru
-          tools: calcit,caps
-          caps-version: "0.1.2"
       - run: cargo build --locked --release
       - run: mkdir -p dylibs && cp target/release/libcalcit_wasmtime.dylib dylibs/
       - run: python3 -c 'import ctypes; ctypes.CDLL("./dylibs/libcalcit_wasmtime.dylib")'
-      - run: calcit calcit.cirru test --tag native --require-match
+      - run: cargo run --locked --release --example try_api
