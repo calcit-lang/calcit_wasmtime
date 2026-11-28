@@ -31,7 +31,7 @@ macOS 27.2.1 arm64 / Rust 1.94 曾出现 release 动态库 LINKEDIT 对齐加载
 
 A release dylib built with Rust 1.94 failed to load on macOS 27.2.1 arm64 due to LINKEDIT alignment. Explicitly disabling release symbol stripping passes loading and native WAT tests on the same host; macOS CI now checks it. See [#42](https://github.com/calcit-lang/calcit_wasmtime/issues/42).
 
-使用者影响：当前源码配对正式 Calcit **0.46.0** / Caps **0.1.2**；已发布的 Git tag **0.2.2** 仍配对 Calcit **0.45.1**。
+使用者影响：当前源码配对正式 Calcit **0.49.0** / Caps **0.1.2**；已发布的 Git tag **0.2.2** 仍配对 Calcit **0.45.1**。
 `run-wat` 首参数使用 `wasmtime.core/WatSource`，即 `String | CirruQuote` 的透明 union；
 原有文本和引用表达式直接传入，运行值与 C-safe ABI 保持。自 0.2.0 起，Dynamic 调用方须先收窄输入种类。CirruQuote 的 list 根、WAT 有效性和 export 形状仍由原 native 检查。
 
@@ -42,7 +42,7 @@ A release dylib built with Rust 1.94 failed to load on macOS 27.2.1 arm64 due to
 Rust、Cargo.lock、crate 0.1.9、同步执行与 0/1/2 状态码不变。候选需完成原 Linux CI
 和精确提交评审后发布；现有 tag 不移动。
 
-Current source pairs official Calcit **0.46.0** and Caps **0.1.2**; the published Git tag **0.2.2** remains paired with Calcit **0.45.1**.
+Current source pairs official Calcit **0.49.0** and Caps **0.1.2**; the published Git tag **0.2.2** remains paired with Calcit **0.45.1**.
 `run-wat` accepts the transparent `WatSource = String | CirruQuote` union. Both existing
 forms pass through without wrappers or ABI changes. Since 0.2.0, callers with Dynamic input
 must narrow the input kind first.
@@ -64,9 +64,9 @@ C-safe buffer layout, allocator ownership, request decoding, and response
 encoding. Wasmtime engine/module execution and the existing 0/1/2 business
 status mapping remain owned by this repository.
 
-运行以下检查前，请先安装或选择正式 Calcit **0.46.0** CLI，并用 `calcit --version` 确认当前版本。
+运行以下检查前，请先安装或选择正式 Calcit **0.49.0** CLI，并用 `calcit --version` 确认当前版本。
 
-Before running these checks, install or select the official Calcit **0.46.0** CLI
+Before running these checks, install or select the official Calcit **0.49.0** CLI
 and confirm the selected version with `calcit --version`.
 
 ```bash

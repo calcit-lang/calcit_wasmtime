@@ -19,7 +19,12 @@
           :code $ quote $ defn format-to-wat (tree)
             let
                 value $ &call-dylib-edn (get-dylib-path |/dylibs/libcalcit_wasmtime) |format_to_wat tree
-              if (string? value) value $ raise |Expected-string-from-format_to_wat
+              match (edn:from-dynamic value)
+                (:ok edn)
+                  match edn
+                    (:string result) result
+                    _ $ raise |Expected-string-from-format_to_wat
+                _ $ raise |Expected-string-from-format_to_wat
           :examples $ []
           :schema $ quote $ Fn Dynamic (-> String) (:open :host)
           :tests $ [] $ %{} 'TestEntry (:name |nil-and-nested-quote)
@@ -32,7 +37,12 @@
           :code $ quote $ defn run-wat (code f-name v0)
             let
                 value $ &call-dylib-edn (get-dylib-path |/dylibs/libcalcit_wasmtime) |run_wat code f-name v0
-              if (number? value) value $ raise |Expected-number-from-run_wat
+              match (edn:from-dynamic value)
+                (:ok edn)
+                  match edn
+                    (:number result) result
+                    _ $ raise |Expected-number-from-run_wat
+                _ $ raise |Expected-number-from-run_wat
           :examples $ []
           :schema $ quote $ Fn WatSource String Number (-> Number)
           :tests $ [] $ %{} 'TestEntry (:name |text-and-quoted-wat)
